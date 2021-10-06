@@ -5,7 +5,7 @@ public class RotateANumber {
 	public static void main(String[] args) {
 
 		int n = 21543;
-		int k = -6;
+		int k = 3;
 
 		int temp = n;
 		int c = 0;
