@@ -36,4 +36,30 @@ public class GetSubSequenceInArrayList {
 		return mres;
 	}
 
+	static ArrayList<String> subsequence2(String s1) {
+
+		if (s1.isEmpty()) {
+			ArrayList<String> list = new ArrayList<String>();
+			list.add("");
+			return list;
+		}
+
+		char ch = s1.charAt(0);
+
+		ArrayList<String> my = new ArrayList<String>();
+		ArrayList<String> cur = subsequence2(s1.substring(1));
+
+		for (String str : cur) {
+			if (!my.contains(str)) { // for uniqueness.
+				my.add(str);
+			}
+			if (!my.contains(ch + str)) {
+				my.add(ch + str);
+			}
+		}
+
+		return my;
+
+	}
+
 }

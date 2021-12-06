@@ -25,4 +25,21 @@ public class PrintSubsequence {
 
 	}
 
+	static int countSubSequence(String s1, String s2) {
+
+		if (s1.isEmpty()) {
+
+			System.out.println(s2);
+			return 1;
+		}
+
+		int c = 0;
+
+		c += countSubSequence(s1.substring(1), s2 + s1.charAt(0));
+		c += countSubSequence(s1.substring(1), s2);
+
+		return c;
+
+	}
+
 }
