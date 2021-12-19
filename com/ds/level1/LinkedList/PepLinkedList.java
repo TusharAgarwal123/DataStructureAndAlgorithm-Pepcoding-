@@ -315,6 +315,401 @@ public class PepLinkedList {
 			return slow;
 		}
 
+		// you have sorted list, remove duplicates from list.
+		// O(n)
+		public void removeDuplicates() {
+			// write your code here
+			LinkedList res = new LinkedList();
+			while (this.size > 0) {
+				int val = this.getFirst();
+				this.removeFirst();
+				if (res.size == 0 || res.tail.data != val) {
+					res.addLast(val);
+				}
+			}
+
+			this.head = res.head;
+			this.tail = res.tail;
+			this.size = res.size;
+		}
+
+		public void removeDuplicates2() {
+
+			if (size == 1) {
+				return;
+			}
+
+			Node temp = head;
+			while (temp.next != null) {
+				if (temp.data == temp.next.data) {
+					temp.next = temp.next.next;
+					size--;
+				} else {
+					temp = temp.next;
+				}
+			}
+
+			tail = temp;
+
+		}
+
+		// arrange all odd elements first then even.
+		public void oddEven() {
+
+			Node i = head;
+			Node j = head;
+
+			while (i != null) {
+
+				if (i.data % 2 == 0) {
+					i = i.next;
+				} else {
+					int temp = i.data;
+					i.data = j.data;
+					j.data = temp;
+					i = i.next;
+					j = j.next;
+
+				}
+
+			}
+
+		}
+
+		// O(n)
+		public void oddEven2() {
+
+			LinkedList odd = new LinkedList();
+			LinkedList even = new LinkedList();
+
+			while (this.size > 0) {
+				int data = this.getFirst();
+				this.removeFirst();
+				if (data % 2 == 0) {
+					even.addLast(data);
+				} else {
+					odd.addLast(data);
+				}
+			}
+
+			if (odd.size > 0 && even.size > 0) {
+				odd.tail.next = even.head;
+				this.head = odd.head;
+				this.tail = even.tail;
+				this.size = odd.size + even.size;
+			} else if (odd.size > 0) {
+				this.head = odd.head;
+				this.tail = odd.tail;
+				this.size = odd.size;
+			} else if (even.size > 0) {
+				this.head = even.head;
+				this.tail = even.tail;
+				this.size = even.size;
+			}
+
+		}
+
+		// O(n)
+		public void kReverse(int k) {
+
+			LinkedList pre = null;
+			while (this.size > 0) {
+
+				LinkedList curr = new LinkedList();
+
+				if (this.size >= k) {
+					for (int i = 0; i < k; i++) {
+						int data = this.getFirst();
+						this.removeFirst();
+						curr.addFirst(data);
+					}
+				} else {
+					int os = this.size;
+					for (int i = 0; i < os; i++) {
+						int data = this.getFirst();
+						this.removeFirst();
+						curr.addLast(data);
+					}
+
+				}
+
+				if (pre == null) {
+					pre = curr;
+				} else {
+					pre.tail.next = curr.head;
+					pre.tail = curr.tail;
+					pre.size += curr.size;
+				}
+
+			}
+			this.head = pre.head;
+			this.tail = pre.tail;
+			this.size = pre.size;
+
+		}
+
+		// you have to display list in reverse without changing the data.
+		public void displayReverse() {
+			displayReverseHelper(head);
+			System.out.println();
+		}
+
+		private void displayReverseHelper(Node node) {
+
+			if (node == null) {
+				return;
+			}
+
+			displayReverseHelper(node.next);
+			System.out.print(node.data + " ");
+
+		}
+
+		// reverse using different approach.(data recursively)
+		Node rleft;
+
+		public void reverse4() {
+			rleft = head;
+			reverse4(head, 0);
+
+		}
+
+		private void reverse4(Node right, int floor) {
+
+			if (right == null) {
+				return;
+			}
+
+			reverse4(right.next, floor + 1);
+
+			if (floor >= size / 2) {
+				int temp = right.data;
+				right.data = rleft.data;
+				rleft.data = temp;
+
+				rleft = rleft.next;
+			}
+
+		}
+
+		// reverse list(pointer recursively)
+		public void reversePR() {
+			reversePRHelper(head);
+			Node temp = head;
+			head = tail;
+			tail = temp;
+			tail.next = null;
+		}
+
+		private void reversePRHelper(Node node) {
+			// write your code here
+
+			if (node.next == null) {
+				return;
+			}
+
+			reversePRHelper(node.next);
+
+			node.next.next = node;
+		}
+
+		public static int findIntersection(LinkedList one, LinkedList two) {
+			// write your code here
+
+			Node t1 = one.head;
+			Node t2 = two.head;
+
+			int diff = Math.abs(one.size - two.size);
+
+			if (one.size > two.size) {
+				for (int i = 0; i < diff; i++) {
+					t1 = t1.next;
+				}
+			} else if (two.size > one.size) {
+				for (int i = 0; i < diff; i++) {
+					t2 = t2.next;
+				}
+			}
+
+			while (t1 != t2) {
+				t1 = t1.next;
+				t2 = t2.next;
+			}
+
+			return t1.data;
+
+		}
+
+		// find list is palindrome or not.
+		Node left = null;
+
+		public boolean IsPalindrome() {
+			// write your code here
+			left = head;
+			return process(head);
+		}
+
+		public boolean process(Node head) {
+			if (head == null) {
+				return true;
+			}
+
+			boolean res = process(head.next);
+
+			if (res == false) {
+				return false;
+			} else if (left.data != head.data) {
+				return false;
+			} else {
+				left = left.next;
+				return true;
+			}
+
+		}
+
+		// fold of linkedlist
+//		Example 1
+//		1->2->3->4->5
+//		will fold as
+//		1->5->2->4->3
+		// O(n)
+		Node leftNode = null;
+
+		public void fold() {
+
+			leftNode = head;
+			foldHelper(head, 0);
+
+		}
+
+		public void foldHelper(Node node, int level) {
+
+			if (node == null) {
+				return;
+			}
+
+			foldHelper(node.next, level + 1);
+			if (level > size / 2) {
+				Node nextNode = leftNode.next;
+				leftNode.next = node;
+				node.next = nextNode;
+				leftNode = nextNode;
+			} else if (level == size / 2) {
+
+				tail = node;
+				tail.next = null;
+
+			}
+
+		}
+
+//		1. Time complexity -> O(n)
+//		2. Space complexity -> Recursion space, O(n)
+		public static LinkedList addTwoLists(LinkedList one, LinkedList two) {
+			// write your code here
+			LinkedList res = new LinkedList();
+			int oc = addTwoListsHelper(one.head, one.size, two.head, two.size, res);
+			if (oc > 0) {
+				res.addFirst(oc);
+			}
+			return res;
+
+		}
+
+		public static int addTwoListsHelper(Node one, int pv1, Node two, int pv2, LinkedList res) {
+
+			if (one == null && two == null) {
+				return 0;
+			}
+
+			if (pv1 > pv2) {
+				int oc = addTwoListsHelper(one.next, pv1 - 1, two, pv2, res);
+				int data = one.data + oc;
+				int newData = data % 10;
+				int newCarry = data / 10;
+				res.addFirst(newData);
+				return newCarry;
+			} else if (pv2 > pv1) {
+				int oc = addTwoListsHelper(one, pv1, two.next, pv2 - 1, res);
+				int data = two.data + oc;
+				int newData = data % 10;
+				int newCarry = data / 10;
+				res.addFirst(newData);
+				return newCarry;
+			} else { // if both place value is equal
+
+				int oc = addTwoListsHelper(one.next, pv1 - 1, two.next, pv2 - 1, res);
+				int data = one.data + two.data + oc;
+				int newData = data % 10;
+				int newCarry = data / 10;
+				res.addFirst(newData);
+				return newCarry;
+			}
+
+		}
+
+		// delete node without head pointer.
+		public static void deleteNode(Node node) {
+
+			// you have given the node ,not the head you have to delete that node from
+			// list.
+
+			// we will copy the data of next node into the given node.
+			// then we will delete the next node.
+
+			node.data = node.next.data;
+			node.next = node.next.next;
+
+		}
+
+		public static Node pairwiseSwap(Node head) {
+
+			Node temp = head;
+
+			while (temp != null && temp.next != null) {
+				int tm = temp.data;
+				temp.data = temp.next.data;
+				temp.next.data = tm;
+
+				temp = temp.next.next;
+			}
+
+			return head;
+
+		}
+
+		// multiply each node by 3.
+		public void multiplyBy3() {
+
+			// Node rr = head;
+
+			int Oldcarry = multiplyBy3(head);
+			if (Oldcarry > 0) {
+
+				Node node = new Node(Oldcarry);
+				node.next = head;
+				head = node;
+
+			}
+
+			// this.head = rr;
+
+		}
+
+		public int multiplyBy3(Node head) {
+
+			if (head == null) {
+				return 0;
+			}
+
+			int carry = multiplyBy3(head.next);
+			int t = head.data * 3;
+			head.data = (carry + t) % 10;
+			carry = (carry + t) / 10;
+			return carry;
+
+		}
+
 	}
 
 	public static void main(String[] args) {

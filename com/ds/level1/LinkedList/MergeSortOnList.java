@@ -14,6 +14,10 @@ public class MergeSortOnList {
 	// you have given a head of two sorted list return the head final sorted list.
 	public static Node mergeTwoSortedList(Node l1, Node l2) {
 
+		if (l1 == null || l2 == null) {
+			return l1 != null ? l1 : l2;
+		}
+
 		Node node = new Node(-1);
 		Node prev = node;
 
@@ -29,18 +33,25 @@ public class MergeSortOnList {
 			}
 		}
 
-		while (l1 != null) {
-			prev.next = new Node(l1.val);
-			prev = prev.next;
-			l1 = l1.next;
-		}
-		while (l2 != null) {
-			prev.next = new Node(l2.val);
-			prev = prev.next;
-			l2 = l2.next;
-		}
+		prev.next = (l1 != null ? l1 : l2);
 
-		return node.next;
+//		while (l1 != null) {
+//			prev.next = new Node(l1.val);
+//			prev = prev.next;
+//			l1 = l1.next;
+//		}
+//		while (l2 != null) {
+//			prev.next = new Node(l2.val);
+//			prev = prev.next;
+//			l2 = l2.next;
+//		}
+
+		Node head = node.next;
+		node.next = null;
+
+		return head;
+		// rather than returning node.next directly, first deattach -1 node.
+		// return node.next;
 
 	}
 
