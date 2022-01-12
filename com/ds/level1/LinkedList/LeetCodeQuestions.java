@@ -352,6 +352,50 @@ public class LeetCodeQuestions {
 
 	}
 
+	// leetcode 82. Remove Duplicates from Sorted List II
+
+	/*
+	 * Given the head of a sorted linked list, delete all nodes that have duplicate
+	 * numbers, leaving only distinct numbers from the original list. Return the
+	 * linked list sorted as well.
+	 */
+
+	public ListNode deleteAllDuplicates(ListNode head) {
+
+		if (head == null || head.next == null) {
+			return head;
+		}
+
+		ListNode dummy = new ListNode(-1);
+		ListNode prev = dummy;
+		prev.next = head;
+		ListNode curr = head.next;
+
+		while (curr != null) {
+			boolean isLoopRun = false;
+
+			while (curr != null && prev.next.val == curr.val) {
+				isLoopRun = true;
+				curr = curr.next;
+			}
+
+			if (isLoopRun == false) {
+				prev = prev.next;
+			} else {
+				prev.next = curr;
+			}
+
+			if (curr != null) {
+				curr = curr.next;
+			}
+		}
+
+		ListNode nHead = dummy.next;
+		dummy.next = null;
+		return nHead;
+
+	}
+
 	// leetcode 83. Remove Duplicates from Sorted List
 	public ListNode deleteDuplicates(ListNode head) {
 
@@ -372,6 +416,35 @@ public class LeetCodeQuestions {
 		}
 
 		return head;
+
+	}
+
+	public ListNode deleteDuplicates2(ListNode head) {
+
+		if (head == null || head.next == null) {
+			return head;
+		}
+
+		ListNode dummy = new ListNode(-(int) 1e8);
+
+		ListNode prev = dummy;
+		ListNode curr = head;
+
+		while (curr != null) {
+
+			while (curr != null && prev.val == curr.val) {
+				curr = curr.next;
+			}
+
+			prev.next = curr;
+			prev = prev.next;
+			if (curr != null) {
+				curr = curr.next;
+			}
+
+		}
+
+		return dummy.next;
 
 	}
 
@@ -810,6 +883,311 @@ public class LeetCodeQuestions {
 		slow.next = slow.next.next;
 
 		return dummy.next;
+
+	}
+
+	// leetocde 203. Remove Linked List Elements
+
+	public ListNode removeElements(ListNode head, int val) {
+
+		if (head == null) {
+			return head;
+		}
+
+		ListNode dummy = new ListNode(-1);
+		ListNode prev = dummy;
+
+		ListNode curr = head;
+		while (curr != null) {
+
+			if (curr.val != val) {
+				prev.next = curr;
+				prev = prev.next;
+			}
+
+			curr = curr.next;
+		}
+
+		prev.next = null;
+
+		return dummy.next;
+	}
+
+	public ListNode segregateO1Node(ListNode head) {
+
+		if (head == null || head.next == null) {
+			return head;
+		}
+
+		ListNode zero = new ListNode(-1);
+		ListNode one = new ListNode(-1);
+		ListNode preZero = zero;
+		ListNode preOne = one;
+
+		ListNode curr = head;
+
+		while (curr != null) {
+			if (curr.val == 0) {
+				preZero.next = curr;
+				preZero = preZero.next;
+			} else {
+				preOne.next = curr;
+				preOne = preOne.next;
+			}
+			curr = curr.next;
+		}
+
+		preZero.next = one.next;
+
+		preOne.next = null; // it is very important to do.
+
+		return zero.next;
+
+	}
+
+	public ListNode segregateO12Node(ListNode head) {
+
+		if (head == null || head.next == null) {
+			return head;
+		}
+
+		ListNode zero = new ListNode(-1);
+		ListNode one = new ListNode(-1);
+		ListNode two = new ListNode(-1);
+		ListNode preZero = zero;
+		ListNode preOne = one;
+		ListNode preTwo = two;
+
+		ListNode curr = head;
+
+		while (curr != null) {
+			if (curr.val == 0) {
+				preZero.next = curr;
+				preZero = preZero.next;
+			} else if (curr.val == 1) {
+				preOne.next = curr;
+				preOne = preOne.next;
+			} else {
+				preTwo.next = curr;
+				preTwo = preTwo.next;
+			}
+			curr = curr.next;
+		}
+
+		preOne.next = two.next; // write this line first.
+		preZero.next = one.next;
+		preTwo.next = null; // it is very important to do.
+
+		return zero.next;
+
+	}
+
+	// you have given a linked list you have to segregate list in such a way that
+	// all smaller
+	// and equal to last node will come left to last node and all larger than last
+	// node should
+	// come right to last node.
+	public ListNode segregateNodeOverTheLastNode(ListNode head) {
+
+		if (head == null || head.next == null) {
+			return head;
+		}
+
+		ListNode tail = findTail(head);
+
+		ListNode smaller = new ListNode(-1);
+		ListNode larger = new ListNode(-1);
+		ListNode ps = smaller;
+		ListNode pl = larger;
+
+		ListNode curr = head;
+
+		while (curr != null) {
+			if (curr.val <= tail.val) {
+				ps.next = curr;
+				ps = ps.next;
+			} else {
+				pl.next = curr;
+				pl = pl.next;
+			}
+			curr = curr.next;
+		}
+
+		ps.next = larger.next;
+		pl.next = null; // it is very important to do.
+
+		return ps;
+		// we have to return the last node, so after segregate last node will point to
+		// ps.
+
+	}
+
+	/*
+	 * 1. Given a singly linklist, Segregate Node of LinkedList over pivot index and
+	 * return starting node of linkedlist. 2. pivot will be any random index in
+	 * range of 0 to length Of Linkedlist 3. After segregation pivot Element should
+	 * have to be present at correct position as in sorted linkedlist.
+	 */
+
+	public static ListNode segregateNodeOverThePivotIndex(ListNode head, int pivotIdx) {
+
+		if (head == null || head.next == null) {
+			return head;
+		}
+
+		int id = 0;
+		ListNode pivot = head;
+		while (pivot != null) {
+			if (id == pivotIdx) {
+				break;
+			}
+
+			pivot = pivot.next;
+			id++;
+		}
+
+		ListNode small = new ListNode(-1);
+		ListNode ps = small;
+		ListNode large = new ListNode(-1);
+		ListNode pl = large;
+
+		ListNode curr = head;
+		id = 0;
+
+		while (curr != null) {
+			if (id == pivotIdx) {
+				id++;
+				curr = curr.next;
+				continue;
+			} else if (curr.val <= pivot.val) {
+				ps.next = curr;
+				ps = ps.next;
+			} else {
+				pl.next = curr;
+				pl = pl.next;
+			}
+
+			curr = curr.next;
+			id++;
+		}
+
+		ps.next = pivot;
+		pivot.next = large.next;
+		pl.next = null;
+
+		return small.next;
+
+	}
+
+	public static ListNode quickSort(ListNode head) {
+		if (head == null || head.next == null) {
+			return head;
+		}
+
+		ListNode[] ans = quickSort_helper(head);
+		return ans[0];
+	}
+
+	// this method will return the head and tail of list after performing sorting.
+	public static ListNode[] quickSort_helper(ListNode head) {
+
+		if (head == null || head.next == null) {
+			return new ListNode[] { head, head };
+		}
+
+		int len = length(head);
+		int pi = len / 2;
+
+		ListNode[] segregateList = segegateListOnPivot(head, pi);
+
+		ListNode[] leftSorted = quickSort_helper(segregateList[0]);
+		ListNode[] rightSorted = quickSort_helper(segregateList[2]);
+
+		return mergeSortedList(leftSorted, segregateList[1], rightSorted);
+
+	}
+
+	public static ListNode[] mergeSortedList(ListNode[] leftSorted, ListNode pivot, ListNode[] rightSorted) {
+
+		ListNode head = null;
+		ListNode tail = null;
+
+		if (leftSorted[0] != null && rightSorted[0] != null) {
+			leftSorted[1].next = pivot;
+			pivot.next = rightSorted[0];
+			head = leftSorted[0];
+			tail = rightSorted[1];
+		} else if (leftSorted[0] != null) {
+			leftSorted[1].next = pivot;
+			head = leftSorted[0];
+			tail = pivot;
+		} else if (rightSorted[0] != null) {
+			pivot.next = rightSorted[0];
+			head = pivot;
+			tail = rightSorted[1];
+		} else {
+			head = pivot;
+			tail = pivot;
+		}
+
+		return new ListNode[] { head, tail };
+
+	}
+
+	public static int length(ListNode head) {
+		if (head == null) {
+			return 0;
+		}
+
+		ListNode curr = head;
+		int c = 0;
+		while (curr != null) {
+			c++;
+			curr = curr.next;
+		}
+
+		return c;
+	}
+
+	public static ListNode[] segegateListOnPivot(ListNode head, int pid) {
+
+//		if (head == null || head.next == null) {
+//			return new ListNode[] {};
+//		}
+
+		ListNode pivot = head;
+
+		// it will find the pivot node.
+		while (pid-- > 0) {
+			pivot = pivot.next;
+		}
+
+		ListNode small = new ListNode(-1);
+		ListNode large = new ListNode(-1);
+		ListNode sp = small;
+		ListNode lp = large;
+
+		ListNode curr = head;
+
+		while (curr != null) {
+
+			if (curr != pivot) {
+				if (curr.val <= pivot.val) {
+					sp.next = curr;
+					sp = sp.next;
+				} else {
+					lp.next = curr;
+					lp = lp.next;
+				}
+			}
+
+			curr = curr.next;
+
+		}
+
+		sp.next = null;
+		lp.next = null;
+		return new ListNode[] { small.next, pivot, large.next };
 
 	}
 
