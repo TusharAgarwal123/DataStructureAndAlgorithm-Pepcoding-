@@ -575,6 +575,9 @@ public class GenericTreeDemo {
 	static Node successor;
 	static int state = 0;
 
+	// predecessor means node which come just before data in preorder.
+	// successor means node which come just after data in preorder.
+
 	public static void predecessorAndSuccessor(Node node, int data) {
 		// write your code here
 
@@ -679,6 +682,116 @@ public class GenericTreeDemo {
 
 	}
 
+	// return the kth smallest from the tree.
+	public static int kthSmallest(Node node, int k) {
+
+		int kl = Integer.MIN_VALUE;
+		for (int i = 0; i < k; i++) {
+			ceilAndFloor(node, kl);
+			kl = ceil;
+			ceil = Integer.MAX_VALUE; // very important to do.
+		}
+
+		return kl;
+
+	}
+
+	static class Pair {
+		int state;
+		Node node;
+	}
+
+	static String preOrder = "";
+	static String postOrder = "";
+
+	// printing preorder and postorder iteratively.
+	public static void printPreOrderAndSuccessor(Node root) {
+
+		Stack<Pair> st = new Stack<>();
+		Pair rootp = new Pair();
+		rootp.state = -1;
+		rootp.node = root;
+
+		st.push(rootp);
+
+		while (st.size() > 0) {
+
+			Pair peek = st.peek();
+			if (peek.state == -1) {
+				preOrder = preOrder + peek.node.data + ",";
+				peek.state++;
+			} else if (peek.state >= 0 && peek.state < peek.node.childrens.size()) {
+				Pair pp = new Pair();
+				pp.state = -1;
+				pp.node = peek.node.childrens.get(peek.state);
+
+				st.push(pp);
+				peek.state++;
+			} else if (peek.state == peek.node.childrens.size()) {
+				postOrder = postOrder + peek.node.data + ",";
+				peek.state++;
+			} else {
+				st.pop();
+			}
+
+		}
+
+	}
+
+	/*
+	 * 1. You are given a partially written GenericTree class. 2. You are required
+	 * to find and print the node which has the subtree with largest sum. Also print
+	 * the sum of the concerned subtree separated from node's value by an '@'. Refer
+	 * the question video for clarity.
+	 */
+
+	static int msum = Integer.MIN_VALUE;
+	static Node mNode = null;
+
+	public static int nodeWithMaxmumSubTreeSum(Node node) {
+
+		int sum = node.data;
+
+		for (Node ch : node.childrens) {
+			int csum = nodeWithMaxmumSubTreeSum(ch);
+			sum += csum;
+		}
+
+		if (sum > msum) {
+			msum = sum;
+			mNode = node;
+		}
+		return sum;
+
+	}
+
+	static int dia = 0;
+
+	public static int diameter(Node node) {
+
+		int dht = -1;
+		int sht = -1;
+
+		for (Node ch : node.childrens) {
+
+			int chh = diameter(ch);
+			if (chh > dht) {
+				sht = dht;
+				dht = chh;
+			} else if (chh > sht) {
+				sht = chh;
+			}
+
+		}
+
+		if (dht + sht + 2 > dia) {
+			dia = dht + sht + 2;
+		}
+
+		return dht + 1;
+
+	}
+
 	public static void main(String[] args) {
 //		Node root = new Node(10);
 //
@@ -741,6 +854,16 @@ public class GenericTreeDemo {
 		ceilAndFloor(root, 70);
 		System.out.println(ceil + "  " + floor);
 		System.out.println(kthLargest(root, 3));
+		System.out.println(kthSmallest(root, 3));
+
+		printPreOrderAndSuccessor(root);
+		System.out.println("Preordeer: " + preOrder);
+		System.out.println("Postordeer: " + postOrder);
+
+		nodeWithMaxmumSubTreeSum(root);
+		System.out.println(mNode.data + "@" + msum);
+		diameter(root);
+		System.out.println(dia);
 //
 //		levelOrderLineWiseZigZag2(root);
 //
