@@ -1,5 +1,6 @@
 package com.ds.level1.Tree.binaryTree;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
@@ -215,6 +216,230 @@ public class BinaryTreeDemo {
 			}
 
 		}
+	}
+
+	public static void preOrder(Node node) {
+		if (node == null) {
+			return;
+		}
+
+		System.out.print(node.data + " ");
+		preOrder(node.left);
+		preOrder(node.right);
+	}
+
+	public static void inOrder(Node node) {
+		if (node == null) {
+			return;
+		}
+
+		inOrder(node.left);
+		System.out.print(node.data + " ");
+		inOrder(node.right);
+	}
+
+	public static void postOrder(Node node) {
+		if (node == null) {
+			return;
+		}
+
+		postOrder(node.left);
+		postOrder(node.right);
+		System.out.print(node.data + " ");
+	}
+
+	static String preOrder = "";
+	static String inOrder = "";
+	static String postOrder = "";
+
+	public static void itrativePreInPostOrder(Node root) {
+
+		if (root == null) {
+			return;
+		}
+
+		Stack<Pair> st = new Stack<>();
+
+		Pair pp = new Pair();
+		pp.state = 1;
+		pp.node = root;
+
+		st.push(pp);
+
+		while (st.size() > 0) {
+
+			Pair peek = st.peek();
+			if (peek.state == 1) {
+
+				preOrder += peek.node.data + " ";
+				peek.state++;
+
+				if (peek.node.left != null) {
+					Pair p = new Pair();
+					p.state = 1;
+					p.node = peek.node.left;
+					st.push(p);
+				}
+
+			} else if (peek.state == 2) {
+
+				inOrder += peek.node.data + " ";
+				peek.state++;
+
+				if (peek.node.right != null) {
+					Pair p = new Pair();
+					p.state = 1;
+					p.node = peek.node.right;
+					st.push(p);
+				}
+
+			} else if (peek.state == 3) {
+
+				postOrder += peek.node.data + " ";
+				st.pop();
+
+			}
+
+		}
+
+	}
+
+	public static boolean find(Node node, int data) {
+
+		// write your code here
+		if (node == null) {
+			return false;
+		}
+
+		if (node.data == data) {
+			return true;
+		}
+
+		boolean l = find(node.left, data);
+		if (l == true) {
+			return true;
+		}
+		boolean r = find(node.right, data);
+		if (r == true) {
+			return true;
+		}
+
+		return false;
+
+	}
+
+	public static ArrayList<Integer> nodeToRootPath(Node node, int data) {
+		// write your code here
+
+		if (node == null) {
+			ArrayList<Integer> list = new ArrayList<>();
+			return list;
+		}
+
+		if (node.data == data) {
+			ArrayList<Integer> list = new ArrayList<>();
+			list.add(data);
+			return list;
+		}
+
+		ArrayList<Integer> l = nodeToRootPath(node.left, data);
+		if (l.size() > 0) {
+
+			l.add(node.data);
+			return l;
+		}
+		ArrayList<Integer> r = nodeToRootPath(node.right, data);
+		if (r.size() > 0) {
+
+			r.add(node.data);
+			return r;
+		}
+
+		return new ArrayList<Integer>();
+
+	}
+
+	public static void printKLevelsDown(Node node, int k) {
+		// write your code here
+
+		if (node == null || k < 0) {
+			return;
+		}
+
+		if (k == 0) {
+			System.out.println(node.data);
+			return;
+		}
+
+		printKLevelsDown(node.left, k - 1);
+		printKLevelsDown(node.right, k - 1);
+
+	}
+
+	/*
+	 * 1. You are given a partially written BinaryTree class. 2. You are given a
+	 * value data and a value k. 3. You are required to complete the body of
+	 * printKNodesFar function. The function is expected to print all nodes which
+	 * are k distance away in any direction from node with value equal to data.
+	 */
+	public static void printKNodesFar(Node node, int data, int k) {
+		// write your code here
+
+		ArrayList<Node> rnPath = nodeToRootPath2(node, data);
+		for (int i = 0; i < rnPath.size(); i++) {
+
+			printKLevelsDown2(rnPath.get(i), k - i, i > 0 ? rnPath.get(i - 1) : null);
+
+		}
+
+	}
+
+	public static ArrayList<Node> nodeToRootPath2(Node node, int data) {
+		// write your code here
+
+		if (node == null) {
+			ArrayList<Node> list = new ArrayList<>();
+			return list;
+		}
+
+		if (node.data == data) {
+			ArrayList<Node> list = new ArrayList<>();
+			list.add(node);
+			return list;
+		}
+
+		ArrayList<Node> l = nodeToRootPath2(node.left, data);
+		if (l.size() > 0) {
+
+			l.add(node);
+			return l;
+		}
+		ArrayList<Node> r = nodeToRootPath2(node.right, data);
+		if (r.size() > 0) {
+
+			r.add(node);
+			return r;
+		}
+
+		return new ArrayList<Node>();
+
+	}
+
+	public static void printKLevelsDown2(Node node, int k, Node blocker) {
+		// write your code here
+
+		if (node == null || k < 0 || node == blocker) {
+			return;
+		}
+
+		if (k == 0) {
+			System.out.println(node.data);
+			return;
+		}
+
+		printKLevelsDown2(node.left, k - 1, blocker);
+		printKLevelsDown2(node.right, k - 1, blocker);
+
 	}
 
 	public static void main(String[] args) {

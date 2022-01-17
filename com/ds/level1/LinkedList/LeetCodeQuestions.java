@@ -1191,6 +1191,144 @@ public class LeetCodeQuestions {
 
 	}
 
+	// you have head of 2 linkedlist, you have to add them.
+
+	public ListNode addTwoList(ListNode l1, ListNode l2) {
+
+		if (l1 == null || l2 == null) {
+			return l1 != null ? l1 : l2;
+		}
+
+		ListNode c1 = reverseList(l1);
+		ListNode c2 = reverseList(l2);
+
+		ListNode head = new ListNode(-1);
+		ListNode itr = head;
+		int c = 0;
+
+		while (c1 != null || c2 != null || c != 0) {
+
+			int sum = c + (c1 != null ? c1.val : 0) + (c2 != null ? c2.val : 0);
+
+			int dg = sum % 10;
+			c = sum / 10;
+
+			itr.next = new ListNode(dg);
+			itr = itr.next;
+
+			if (c1 != null) {
+				c1 = c1.next;
+			}
+			if (c2 != null) {
+				c2 = c2.next;
+			}
+
+		}
+
+		return reverseList(head.next);
+
+	}
+
+	// you have head of 2 linkedlist, you have to substract them.
+	// l1 is greater than l2.
+	public ListNode substractTwoList(ListNode l1, ListNode l2) {
+
+		if (l2 == null) {
+			return l1;
+		}
+
+		// add this case if it is mentioned that first list can be null.
+//		if (l1 == null) {
+//			l2.val = -l2.val;
+//			return l2;
+//		}
+
+		ListNode c1 = reverseList(l1);
+		ListNode c2 = reverseList(l2);
+
+		ListNode head = new ListNode(-1);
+		ListNode itr = head;
+		int b = 0;
+
+		while (c1 != null) {
+
+			int diff = b + c1.val - (c2 != null ? c2.val : 0);
+
+			if (diff < 0) {
+
+				b = -1;
+				diff += 10;
+
+			} else {
+				b = 0;
+			}
+
+			itr.next = new ListNode(diff);
+			itr = itr.next;
+
+			c1 = c1.next;
+			if (c2 != null) {
+				c2 = c2.next;
+			}
+
+		}
+
+		return reverseList(head.next);
+
+	}
+
+//	// you have head of 2 linkedlist, you have to multiply them.
+//	public ListNode multiplyTwoList(ListNode l1, ListNode l2) {
+//
+//		l1 = reverseList(l1);
+//		l2 = reverseList(l2);
+//
+//		ListNode l2_itr = l2;
+//
+//		ListNode dummy = new ListNode(-1);
+//		ListNode ansItr = dummy;
+//
+//		while (l2_itr != null) {
+//
+//			ListNode prod = multiplyListWithDigit(l1, l2_itr.val);
+//			l2_itr = l2_itr.next;
+//			addTwoList(prod, ansItr);
+//			ansItr = ansItr.next;
+//
+//		}
+//
+//		return reverseList(dummy.next);
+//
+//	}
+
+	// this method will multiply whole list with single digit.
+	public ListNode multiplyListWithDigit(ListNode l1, int dig) {
+
+		ListNode head = new ListNode(-1);
+		ListNode itr = head;
+
+		int c = 0;
+		ListNode c1 = l1;
+
+		while (c1 != null || c > 0) {
+
+			int ans = c + (c1 != null ? c1.val : 0) * dig;
+			c = ans / 10;
+			ans = ans % 10;
+
+			itr.next = new ListNode(ans);
+			itr = itr.next;
+
+			if (c1 != null) {
+				c1 = c1.next;
+			}
+
+		}
+
+		return head.next;
+
+	}
+
 	public static void main(String[] args) {
 
 	}
