@@ -218,6 +218,38 @@ public class BinaryTreeDemo {
 		}
 	}
 
+	public static void levelOrder3(Node node) {
+		// write your code here
+		if (node == null) {
+			return;
+		}
+
+		Queue<Node> q = new LinkedList<>();
+		q.add(node);
+		q.add(null);
+		while (q.size() > 0) {
+
+			Node nd = q.remove();
+
+			if (nd == null) {
+				System.out.println();
+				if (q.size() > 0) {
+					q.add(null);
+				}
+				continue;
+			}
+
+			System.out.print(nd.data + " ");
+
+			if (nd.left != null) {
+				q.add(nd.left);
+			}
+			if (nd.right != null) {
+				q.add(nd.right);
+			}
+		}
+	}
+
 	public static void preOrder(Node node) {
 		if (node == null) {
 			return;
@@ -442,16 +474,394 @@ public class BinaryTreeDemo {
 
 	}
 
+	/*
+	 * 3. You are required to complete the body of pathToLeafFromRoot function. The
+	 * function is expected to print all paths from root to leaves which have sum of
+	 * nodes in range from lo to hi (both inclusive). The elements in path should be
+	 * separated by spaces.
+	 */
+	public static void pathToLeafFromRoot(Node node, String path, int sum, int lo, int hi) {
+		// write your code here
+
+		if (node == null) {
+			return;
+		}
+
+		if (node.left == null && node.right == null) {
+			sum += node.data;
+			if (sum >= lo && sum <= hi) {
+				System.out.println(path + node.data);
+			}
+			return;
+		}
+
+		pathToLeafFromRoot(node.left, path + node.data + " ", sum + node.data, lo, hi);
+		pathToLeafFromRoot(node.right, path + node.data + " ", sum + node.data, lo, hi);
+
+	}
+
+	/*
+	 * 1. You are given a partially written BinaryTree class. 2. You are required to
+	 * complete the body of createLeftCloneTree function. The function is expected
+	 * to create a new node for every node equal in value to it and inserted between
+	 * itself and it's left child. Check question video for clarity.
+	 */
+	public static Node createLeftCloneTree(Node node) {
+		// write your code here
+
+		if (node == null) {
+			return node;
+		}
+
+		Node lcn = createLeftCloneTree(node.left);
+		Node rcn = createLeftCloneTree(node.right);
+
+		Node lcr = new Node();
+		lcr.data = node.data;
+		lcr.left = lcn;
+
+		node.left = lcr;
+		node.right = rcn; // need not to do it.
+
+		return node;
+	}
+
+	/*
+	 * 1. You are given a partially written BinaryTree class. 2. You are required to
+	 * complete the body of transBackFromLeftClonedTree function. The function is
+	 * expected to convert a left-cloned tree back to it's original form. The left
+	 * cloned tree is dicussed in previous question. In a left-clone tree a new node
+	 * for every node equal in value to it is inserted between itself and it's left
+	 * child. For clarity check out the question video.
+	 */
+	public static Node transBackFromLeftClonedTree(Node node) {
+		// write your code here
+
+		if (node == null) {
+			return null;
+		}
+
+		Node lnt = transBackFromLeftClonedTree(node.left.left);
+		Node rnt = transBackFromLeftClonedTree(node.right);
+
+		node.left = lnt;
+		node.right = rnt; // need not to do it.
+
+		return node;
+
+	}
+
+	/*
+	 * 1. You are given a partially written BinaryTree class. 2. You are required to
+	 * complete the body of printSingleChildNodes function. The function is expected
+	 * to print in separate lines, all such nodes which are only child of their
+	 * parent. Use preorder for traversal.
+	 */
+
+	// initially parent is passed null because for root node there is no parent.
+	public static void printSingleChildNodes(Node node, Node parent) {
+		// write your code here
+
+		if (node == null) {
+			return;
+		}
+
+		if (parent != null && parent.left == node && parent.right == null) {
+			System.out.println(node.data);
+		} else if (parent != null && parent.right == node && parent.left == null) {
+			System.out.println(node.data);
+		}
+
+		printSingleChildNodes(node.left, node); // for left node parent will be node itself.
+		printSingleChildNodes(node.right, node);
+
+	}
+
+	public static Node removeLeaves(Node node) {
+		// write your code here
+
+		if (node == null) {
+			return null;
+		}
+
+		if (node.left == null && node.right == null) {
+			return null;
+		}
+
+		node.left = removeLeaves(node.left);
+		node.right = removeLeaves(node.right);
+
+		return node;
+
+	}
+
+	// this is inefficient approach taking O(n^2) times.
+	public static int diameter1(Node node) {
+		// write your code here
+
+		if (node == null) {
+			return 0;
+		}
+
+		int ld = diameter1(node.left);
+		int rd = diameter1(node.right);
+
+		int md = height(node.left) + height(node.right) + 2;
+
+		return Math.max(md, Math.max(ld, rd));
+
+	}
+
+	static class DiaPair {
+		int ht;
+		int dia;
+	}
+
+	// this is efficient approach taking O(n) times.
+	// having faith that function will return the diameter and height of node.
+	public static DiaPair diameter2(Node node) {
+
+		if (node == null) {
+			DiaPair bp = new DiaPair();
+			bp.ht = -1;
+			bp.dia = 0;
+			return bp;
+		}
+
+		DiaPair lp = diameter2(node.left); // give the diameter and height of left side.
+		DiaPair rp = diameter2(node.right);
+
+		DiaPair mp = new DiaPair();
+
+		mp.ht = Math.max(lp.ht, rp.ht) + 1;
+
+		int fes = lp.ht + rp.ht + 2;
+
+		mp.dia = Math.max(fes, Math.max(lp.dia, rp.dia));
+		return mp;
+
+	}
+
+	// this is efficient approach taking O(n) times.
+	// having faith that function will return the height of node.
+	static int dia = 0;
+
+	public static int diameter3(Node node) {
+
+		if (node == null) {
+			return -1;
+		}
+
+		int lh = diameter3(node.left); // give the height of left side.
+		int rh = diameter3(node.right); // give the height of right side.
+
+		int ht = Math.max(lh, rh) + 1;
+
+		if (lh + rh + 2 > dia) {
+			dia = lh + rh + 2;
+		}
+
+		return ht;
+
+	}
+
+	/*
+	 * 2. You are required to complete the body of tilt function. The function is
+	 * expected to set the value of data member "tilt". "tilt" of a node is the
+	 * absolute value of difference between sum of nodes in it's left subtree and
+	 * right subtree. "tilt" of the whole tree is represented as the sum of "tilt"s
+	 * of all it's nodes.
+	 */
+	static int tilt = 0;
+
+	public static int tilt(Node node) {
+		// write your code here to set the tilt data member
+
+		if (node == null) {
+			return 0;
+		}
+
+		int lt = tilt(node.left); // give the sum of left side.
+		int rt = tilt(node.right); // give the sum of right side.
+
+		int ct = Math.abs(lt - rt); // calculating tilt of current node.
+		tilt += ct;
+
+		return lt + rt + node.data;
+
+	}
+
+	static class TiltPair {
+		int sum;
+		int tl;
+	}
+
+	public static TiltPair tilt2(Node node) {
+
+		if (node == null) {
+			TiltPair pp = new TiltPair();
+			pp.sum = 0;
+			pp.tl = 0;
+			return pp;
+		}
+
+		TiltPair l = tilt2(node.left);
+		TiltPair r = tilt2(node.right);
+
+		int myTilt = Math.abs(l.sum - r.sum);
+
+		TiltPair myP = new TiltPair();
+		myP.tl = myTilt + l.tl + r.tl;
+		myP.sum = l.sum + r.sum + node.data;
+
+		return myP;
+
+	}
+
+	static class BSTPair {
+		boolean isBST;
+		int min;
+		int max;
+	}
+
+	public static BSTPair isBST(Node node) {
+
+		if (node == null) {
+			BSTPair bp = new BSTPair();
+			bp.isBST = true;
+			bp.min = Integer.MAX_VALUE;
+			bp.max = Integer.MIN_VALUE;
+			return bp;
+		}
+
+		BSTPair lp = isBST(node.left);
+		BSTPair rp = isBST(node.right);
+
+		BSTPair mp = new BSTPair();
+
+		mp.isBST = (lp.isBST && rp.isBST) && (node.data >= lp.max && node.data <= rp.min);
+
+		mp.min = Math.min(node.data, Math.min(lp.min, rp.min));
+		mp.max = Math.max(node.data, Math.max(lp.max, rp.max));
+
+		return mp;
+
+	}
+
+	static class BalancedPair {
+		boolean isBal;
+		int ht;
+	}
+
+	/*
+	 * . You are required to check if the tree is balanced. A binary tree is
+	 * balanced if for every node the gap between height's of it's left and right
+	 * subtree is not more than 1.
+	 */
+	public static BalancedPair isBalanced(Node node) {
+
+		if (node == null) {
+			BalancedPair bp = new BalancedPair();
+			bp.isBal = true;
+			bp.ht = -1;
+			return bp;
+		}
+
+		BalancedPair lp = isBalanced(node.left);
+		BalancedPair rp = isBalanced(node.right);
+
+		BalancedPair mp = new BalancedPair();
+		mp.ht = Math.max(lp.ht, rp.ht) + 1;
+		mp.isBal = (lp.isBal && rp.isBal) && (Math.abs(lp.ht - rp.ht) <= 1);
+
+		return mp;
+
+	}
+
+	static boolean ans = true;
+
+	public static int isBalanced2(Node node) {
+
+		if (node == null) {
+			return -1;
+		}
+
+		int lh = isBalanced2(node.left);
+		int rh = isBalanced2(node.right);
+
+		if (Math.abs(lh - rh) > 1) {
+			ans = false;
+		}
+
+		return Math.max(lh, rh) + 1;
+
+	}
+
+	/*
+	 * 1. You are given a partially written BinaryTree class. 2. You are required to
+	 * find the root of largest sub-tree which is a BST. Also, find the number of
+	 * nodes in that sub-tree.
+	 */
+	static class BSTPair2 {
+		boolean isBST;
+		int min;
+		int max;
+		Node node; // it will contain the root of maximum bst subtree.
+		int mNodeSize; // it will contain the size of maximum bst subtree.
+	}
+
+	public static BSTPair2 largestBSTSubTree(Node node) {
+
+		if (node == null) {
+			BSTPair2 bp = new BSTPair2();
+			bp.isBST = true;
+			bp.min = Integer.MAX_VALUE;
+			bp.max = Integer.MIN_VALUE;
+			bp.node = null;
+			bp.mNodeSize = 0;
+			return bp;
+		}
+
+		BSTPair2 lp = largestBSTSubTree(node.left);
+		BSTPair2 rp = largestBSTSubTree(node.right);
+
+		BSTPair2 mp = new BSTPair2();
+
+		mp.isBST = (lp.isBST && rp.isBST) && (node.data >= lp.max && node.data <= rp.min);
+
+		mp.min = Math.min(node.data, Math.min(lp.min, rp.min));
+		mp.max = Math.max(node.data, Math.max(lp.max, rp.max));
+
+		if (mp.isBST == true) {
+			mp.node = node;
+			mp.mNodeSize = lp.mNodeSize + rp.mNodeSize + 1;
+		} else if (lp.mNodeSize > rp.mNodeSize) {
+			mp.node = lp.node;
+			mp.mNodeSize = lp.mNodeSize;
+		} else {
+			mp.node = rp.node;
+			mp.mNodeSize = rp.mNodeSize;
+		}
+
+		return mp;
+
+	}
+
 	public static void main(String[] args) {
 
-		Integer ar[] = { 50, 25, 12, null, null, 37, 30, null, null, null, 75, 62, null, 70, null, null, 87, null,
-				null };
+		Integer ar[] = { 50, 25, 12, null, null, 37, 30, null, null, 40, null, null, 75, 62, 60, null, null, 70, null,
+				null, 87, null, null };
 
 		Node root = construct(ar);
 		// display(root);
 		levelOrder(root);
 		System.out.println();
 		levelOrder2(root);
+		System.out.println();
+		levelOrder3(root);
+		System.out.println();
+
+		pathToLeafFromRoot(root, "", 0, 150, 250);
 
 	}
 
