@@ -1,5 +1,8 @@
 package com.ds.level1.Tree.binarySearchTree;
 
+import java.util.ArrayList;
+import java.util.Stack;
+
 public class BinarySearchTreeDemo {
 
 	public static class Node {
@@ -33,6 +36,42 @@ public class BinarySearchTreeDemo {
 			node.right = add(node.right, data);
 		} else if (data < node.data) {
 			node.left = add(node.left, data);
+		}
+
+		return node;
+
+	}
+
+	/*
+	 * 1. You are given a partially written BST class. 2. You are required to
+	 * complete the body of remove function. "remove" function is expected to remove
+	 * a new node with given data to the tree and return the new root.
+	 */
+	public static Node remove(Node node, int data) {
+		// write your code here
+		if (node == null) {
+			return null;
+		}
+
+		if (data > node.data) {
+			node.right = remove(node.right, data);
+		} else if (data < node.data) {
+			node.left = remove(node.left, data);
+		} else {
+
+			if (node.left != null && node.right != null) {
+				int lmax = max(node.left);
+				node.data = lmax;
+				node.left = remove(node.left, lmax);
+				return node;
+			} else if (node.left != null) {
+				return node.left;
+			} else if (node.right != null) {
+				return node.right;
+			} else {
+				return null;
+			}
+
 		}
 
 		return node;
@@ -216,6 +255,7 @@ public class BinarySearchTreeDemo {
 
 	// O(nlogn).
 	// find is taking O(h), which is logn.
+	// space is O(h).
 	public static void targetSumPair(Node root, Node node, int data) {
 
 		if (node == null) {
@@ -233,6 +273,147 @@ public class BinarySearchTreeDemo {
 
 		targetSumPair(root, node.right, data);
 
+	}
+
+	// time => O(n)
+	// space => O(n)
+	public static void targetSumPair2(Node node, int data) {
+
+		ArrayList<Integer> list = new ArrayList<Integer>();
+
+		inOrder(node, list);
+
+		int li = 0;
+		int ri = list.size() - 1;
+
+		while (li < ri) {
+			int left = list.get(li);
+			int right = list.get(ri);
+
+			if (left + right < data) {
+				li++;
+			} else if (left + right > data) {
+				ri--;
+			} else {
+				System.out.println(left + " " + right);
+				li++;
+				ri--;
+			}
+		}
+
+	}
+
+	static class NdPair {
+		int state;
+		Node node;
+
+		NdPair() {
+
+		}
+
+		NdPair(int state, Node node) {
+			this.state = state;
+			this.node = node;
+		}
+	}
+
+	// most optimized approach and most important question.
+	// time=O(n)
+	// space=O(h)
+	public static void targetSumPair3(Node node, int tar) {
+
+		Stack<NdPair> ls = new Stack<>();
+		Stack<NdPair> rs = new Stack<>();
+
+		ls.push(new NdPair(1, node));
+		rs.push(new NdPair(1, node));
+
+		Node left = getNextFromNormal(ls);
+		Node right = getNextFromReverse(rs);
+
+		while (left.data < right.data) {
+			if (left.data + right.data < tar) {
+				left = getNextFromNormal(ls);
+			} else if (left.data + right.data > tar) {
+				right = getNextFromReverse(rs);
+			} else {
+				System.out.println(left.data + " " + right.data);
+				left = getNextFromNormal(ls);
+				right = getNextFromReverse(rs);
+			}
+		}
+
+	}
+
+	public static Node getNextFromNormal(Stack<NdPair> st) {
+
+		while (st.size() > 0) {
+			NdPair top = st.peek();
+			if (top.state == 1) {
+				top.state++;
+				if (top.node.left != null) {
+					NdPair p = new NdPair();
+					p.state = 1;
+					p.node = top.node.left;
+					st.push(p);
+				}
+			} else if (top.state == 2) {
+				top.state++;
+				if (top.node.right != null) {
+					NdPair p = new NdPair();
+					p.state = 1;
+					p.node = top.node.right;
+					st.push(p);
+				}
+				return top.node;
+			} else {
+				st.pop();
+			}
+		}
+
+		return null;
+
+	}
+
+	public static Node getNextFromReverse(Stack<NdPair> st) {
+
+		while (st.size() > 0) {
+			NdPair top = st.peek();
+			if (top.state == 1) {
+				top.state++;
+				if (top.node.right != null) {
+					NdPair p = new NdPair();
+					p.state = 1;
+					p.node = top.node.right;
+					st.push(p);
+				}
+			} else if (top.state == 2) {
+				top.state++;
+				if (top.node.left != null) {
+					NdPair p = new NdPair();
+					p.state = 1;
+					p.node = top.node.left;
+					st.push(p);
+				}
+				return top.node;
+			} else {
+				st.pop();
+			}
+		}
+
+		return null;
+
+	}
+
+	// it will fill list with increasing no of elements.
+	public static void inOrder(Node node, ArrayList<Integer> list) {
+		if (node == null) {
+			return;
+		}
+
+		inOrder(node.left, list);
+		list.add(node.data);
+		inOrder(node.right, list);
 	}
 
 	public static void main(String[] args) {
