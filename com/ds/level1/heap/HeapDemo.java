@@ -41,6 +41,25 @@ public class HeapDemo {
 		}
 	}
 
+	// O(nlogk), good approach.
+	public static void KLargest3(int ar[], int k) {
+		PriorityQueue<Integer> q = new PriorityQueue<Integer>();
+		// min heap.
+
+		for (int x : ar) {
+
+			q.add(x);
+			if (q.size() > k) {
+				q.remove();
+			}
+
+		}
+
+		while (q.size() > 0) {
+			System.out.println(q.remove());
+		}
+	}
+
 	/*
 	 * 1. You are given a number n, representing the size of array a. 2. You are
 	 * given n numbers, representing elements of array a. 3. The array is nearly

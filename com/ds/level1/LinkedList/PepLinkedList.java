@@ -133,6 +133,28 @@ public class PepLinkedList {
 
 		}
 
+		// using recursion.
+		public void addAtUsingRecursion(int val, int idx) {
+
+			head = addAtUsingRecursion(val, idx, head);
+
+		}
+
+		private Node addAtUsingRecursion(int val, int idx, Node node) {
+
+			if (idx == 0) {
+				Node temp = new Node(val);
+				temp.next = node;
+				size++;
+				return temp;
+
+			}
+
+			node.next = addAtUsingRecursion(val, idx - 1, node.next);
+			return node;
+
+		}
+
 		// O(1)
 		public void removeFirst() {
 			if (size == 0) {

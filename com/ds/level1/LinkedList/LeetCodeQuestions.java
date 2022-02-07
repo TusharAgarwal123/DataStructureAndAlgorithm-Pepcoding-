@@ -818,6 +818,67 @@ public class LeetCodeQuestions {
 
 	}
 
+	// if cycle present then return the length of cycle.
+	public int lengthOfCycle(ListNode head) {
+
+		if (head == null || head.next == null) {
+			return 0;
+		}
+
+		ListNode slow = head;
+		ListNode fast = head;
+
+		while (fast.next != null && fast.next.next != null) {
+			slow = slow.next;
+			fast = fast.next.next;
+
+			if (slow == fast) {
+				int len = 0;
+				ListNode temp = slow;
+
+				do {
+					temp = temp.next;
+					len++;
+				} while (temp != slow);
+
+				return len;
+			}
+		}
+
+		return 0;
+
+	}
+
+	// leetcode 202. Happy Number
+	public boolean isHappy(int n) {
+
+		int slow = n;
+		int fast = n;
+
+		do {
+			slow = findDouble(slow);
+			fast = findDouble(findDouble(fast));
+
+		} while (slow != fast);
+
+		if (slow == 1) {
+			return true;
+		}
+
+		return false;
+
+	}
+
+	private int findDouble(int n) {
+		int ans = 0;
+		while (n > 0) {
+			int rem = n % 10;
+			ans += (rem * rem);
+			n = n / 10;
+		}
+		return ans;
+	}
+
 	// leetcode 142. Linked List Cycle II
 	// this will find the cyclic point in linkedlist
 
@@ -853,6 +914,41 @@ public class LeetCodeQuestions {
 
 		return slow;
 
+	}
+
+	// leetcode 61. Rotate List
+	public ListNode rotateRight(ListNode head, int k) {
+
+		if (head == null || head.next == null || k <= 0) {
+			return head;
+		}
+
+		ListNode last = head;
+		int len = 1;
+		while (last.next != null) {
+			last = last.next;
+			len++;
+		}
+
+		last.next = head;
+		int rotations = k % len;
+
+//		//do it if mentioned that k can be nagative also.
+//		if (rotations < 0) {
+//			rotations = rotations + len;
+//		}
+
+		int skip = len - rotations;
+		ListNode newLast = head;
+		for (int i = 0; i < skip - 1; i++) {
+			newLast = newLast.next;
+
+		}
+
+		head = newLast.next;
+		newLast.next = null;
+
+		return head;
 	}
 
 	// leetcode 19. Remove Nth Node From End of List
