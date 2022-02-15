@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Stack;
 
 public class GraphDemo {
 
@@ -72,6 +73,22 @@ public class GraphDemo {
 			this.level = level;
 		}
 
+	}
+
+	static class Pair5 implements Comparable<Pair5> {
+		int vtx;
+		int parent;
+		int wt;
+
+		Pair5(int src, int nbr, int wt) {
+			this.vtx = src;
+			this.parent = nbr;
+			this.wt = wt;
+		}
+
+		public int compareTo(Pair5 o) {
+			return this.wt - o.wt;
+		}
 	}
 
 	// this is DFS(Depth first search)
@@ -483,6 +500,132 @@ public class GraphDemo {
 		}
 
 		return true;
+
+	}
+
+	// we have to print all hamiltonian paths and cycle present in graph.
+	// pass 1 in csf.
+	// pass giving src in src and osrc.
+	// in psf pass src+"" initially.
+	public static void printHamiltonianPathAndCycle(ArrayList<Edge>[] graph, boolean visited[], int csf, int src,
+			String psf, int osrc) {
+
+		if (csf == graph.length) {
+
+			System.out.print(psf);
+			boolean isHCycle = false;
+			for (Edge e : graph[osrc]) { // checking if Hamiltonian path is cycle or not.
+				if (e.v2 == src) {
+					isHCycle = true;
+					break;
+				}
+			}
+
+			if (isHCycle) {
+				System.out.println("*");
+			} else {
+				System.out.println(".");
+			}
+			return;
+
+		}
+
+		visited[src] = true;
+		for (Edge e : graph[src]) {
+			if (visited[e.v2] == false) {
+				printHamiltonianPathAndCycle(graph, visited, csf + 1, e.v2, psf + e.v2, osrc);
+			}
+		}
+
+		visited[src] = false;
+
+	}
+
+	// for itrative DFS, code is same as BFS but we will use Stack in this.
+	// in itrative DFS euler will traverse in reverse, means it is reverse preorder.
+	public static void iterativeDFS(ArrayList<Edge>[] graph, int src) {
+
+		boolean[] visited = new boolean[graph.length];
+		Stack<Pair2> st = new Stack<>();
+		st.push(new Pair2(src, src + ""));
+
+		while (st.size() > 0) {
+
+			Pair2 rem = st.pop();
+			if (visited[rem.vtx] == true) {
+				continue;
+			}
+
+			visited[rem.vtx] = true;
+			System.out.println(rem.vtx + "@" + rem.psf);
+			for (Edge e : graph[rem.vtx]) {
+				if (visited[e.v2] == false) {
+					st.push(new Pair2(e.v2, rem.psf + e.v2));
+				}
+			}
+
+		}
+
+	}
+
+	// this is nothing but Prim's algorithm.
+	public static void minimumWireRequiredToConnectAllPcs(ArrayList<Edge>[] graph) {
+
+		boolean visited[] = new boolean[graph.length];
+		PriorityQueue<Pair5> q = new PriorityQueue<>();
+		q.add(new Pair5(0, -1, 0));
+
+		while (q.size() > 0) {
+			Pair5 rem = q.remove();
+			if (visited[rem.vtx] == true) {
+				continue;
+			}
+
+			visited[rem.vtx] = true;
+
+			if (rem.vtx != 0) {
+				System.out.println("[" + rem.vtx + "-" + rem.parent + "@" + rem.wt + "]");
+			}
+
+			for (Edge e : graph[rem.vtx]) {
+				if (visited[e.v2] == false) {
+					q.add(new Pair5(e.v2, rem.vtx, e.wt));
+				}
+			}
+
+		}
+	}
+
+	// in topological sort graph will be directed acyclic.
+	public static void topologicalSort(ArrayList<Edge>[] graph) {
+		boolean visited[] = new boolean[graph.length];
+		Stack<Integer> st = new Stack<>();
+
+		// graph can be disconnected.
+		for (int i = 0; i < graph.length; i++) {
+
+			if (visited[i] == false) {
+				topologicalSort_helper(graph, visited, i, st);
+			}
+
+		}
+
+		while (st.size() > 0) {
+			System.out.println(st.pop());
+		}
+	}
+
+	public static void topologicalSort_helper(ArrayList<Edge>[] graph, boolean[] visited, int src, Stack<Integer> st) {
+
+		visited[src] = true;
+
+		for (Edge e : graph[src]) {
+			if (visited[e.v2] == false) {
+				topologicalSort_helper(graph, visited, e.v2, st);
+			}
+		}
+
+		st.push(src);
 
 	}
 
