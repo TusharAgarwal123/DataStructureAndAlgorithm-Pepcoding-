@@ -337,6 +337,30 @@ public class BinaryTreeDemo {
 
 	}
 
+	// Time O(n).
+	// Space O(1).
+	public static void itrativeInOrder(Node root) {
+
+		Stack<Node> st = new Stack<>();
+		pushAllLeft(root, st);
+
+		while (st.size() != 0) {
+			Node rm = st.pop();
+			System.out.print(rm.data + " ");
+			pushAllLeft(rm.right, st);
+		}
+
+	}
+
+	private static void pushAllLeft(Node node, Stack<Node> st) {
+
+		while (node != null) {
+			st.push(node);
+			node = node.left;
+		}
+
+	}
+
 	public static boolean find(Node node, int data) {
 
 		// write your code here

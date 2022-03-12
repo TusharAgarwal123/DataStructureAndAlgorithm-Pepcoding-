@@ -67,4 +67,41 @@ public class GoldMine {
 
 	}
 
+	public static int findMaxGold2(int n, int m, int ar[][]) {
+
+		int dp[][] = new int[n][m];
+		int dir[][] = { { -1, 1 }, { 0, 1 }, { 1, 1 } };
+
+		for (int sc = m - 1; sc >= 0; sc--) {
+			for (int sr = n - 1; sr >= 0; sr--) {
+				if (sc == m - 1) {
+					dp[sr][sc] = ar[sr][sc];
+					continue;
+				}
+
+				int maxGold = 0;
+				for (int d = 0; d < dir.length; d++) {
+					int r = sr + dir[d][0];
+					int c = sc + dir[d][1];
+
+					if (r >= 0 && c >= 0 && r < n && c < m) {
+						maxGold = Math.max(ar[sr][sc] + dp[r][c], maxGold);
+					}
+
+				}
+
+				dp[sr][sc] = maxGold;
+			}
+		}
+
+		int maxGold = 0;
+		for (int i = 0; i < n; i++) {
+			if (dp[i][0] > maxGold) {
+				maxGold = dp[i][0];
+			}
+		}
+
+		return maxGold;
+	}
+
 }

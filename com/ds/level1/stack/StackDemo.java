@@ -887,6 +887,110 @@ public class StackDemo {
 		System.out.println(pot);
 	}
 
+	public static void mergeOverlappingIntervals(int[][] ar) {
+		// merge overlapping intervals and print in increasing order of start time
+
+		Pair2[] pair = new Pair2[ar.length];
+		for (int i = 0; i < ar.length; i++) {
+			pair[i] = new Pair2(ar[i][0], ar[i][1]);
+		}
+
+		Arrays.sort(pair);
+		// we are sorting array which contains object so we have to implements
+		// comparable on object.
+
+		Stack<Pair2> st = new Stack<>();
+		for (int i = 0; i < ar.length; i++) {
+			if (i == 0) {
+				st.push(pair[i]);
+			} else {
+				Pair2 top = st.peek();
+				if (pair[i].st > top.et) {
+					st.push(pair[i]);
+				} else {
+					top.et = Math.max(top.et, pair[i].et);
+				}
+			}
+		}
+
+		Stack<Pair2> res = new Stack<>();
+		while (st.size() > 0) {
+			res.push(st.pop());
+		}
+
+		while (res.size() > 0) {
+			Pair2 top = res.pop();
+			System.out.println(top.st + " " + top.et);
+		}
+
+	}
+
+	// leetcode 56. Merge Intervals.
+	public int[][] merge(int[][] intervals) {
+
+		Pair2[] pairs = new Pair2[intervals.length];
+
+		for (int i = 0; i < intervals.length; i++) {
+			pairs[i] = new Pair2(intervals[i][0], intervals[i][1]);
+		}
+
+		Arrays.sort(pairs);
+
+		Stack<Pair2> st = new Stack<>();
+
+		for (int i = 0; i < pairs.length; i++) {
+			if (i == 0) {
+				st.push(pairs[i]);
+			} else {
+				Pair2 top = st.peek();
+				if (pairs[i].st > top.et) {
+					st.push(pairs[i]);
+				} else {
+					top.et = Math.max(top.et, pairs[i].et);
+				}
+			}
+
+		}
+
+		Stack<Pair2> resultStack = new Stack<>();
+
+		while (st.size() > 0) {
+			resultStack.push(st.pop());
+		}
+
+		int[][] res = new int[resultStack.size()][2];
+
+		for (int i = 0; i < res.length; i++) {
+
+			Pair2 inter = resultStack.pop();
+			res[i][0] = inter.st;
+			res[i][1] = inter.et;
+
+		}
+
+		return res;
+	}
+
+	static class Pair2 implements Comparable<Pair2> {
+		int st;
+		int et;
+
+		Pair2(int x, int y) {
+			this.st = x;
+			this.et = y;
+		}
+
+		public int compareTo(Pair2 o) {
+			if (this.st != o.st) {
+				return this.st - o.st;
+			} else {
+				// if starting time is not same then sort on basis
+				// of end time.
+				return this.et - o.et;
+			}
+		}
+	}
+
 	public static void main(String[] args) {
 		balancedBracket("([(a + b) + {(c + d) * (e / f)}]");
 		int ar[] = { 5, 3, 8, 4, 7 };

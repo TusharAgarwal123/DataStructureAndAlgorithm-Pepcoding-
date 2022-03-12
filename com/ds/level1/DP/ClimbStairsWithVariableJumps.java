@@ -29,7 +29,8 @@ public class ClimbStairsWithVariableJumps {
 
 	// tabulation
 	// here we are start solving the problem from last bcoz smaller problem is at
-	// last.
+	// last. we can also solve this problem from top to bottom then we have to
+	// change the meaning of dp.
 	public static int countJumps(int n, int ar[]) {
 
 		int dp[] = new int[n + 1];
