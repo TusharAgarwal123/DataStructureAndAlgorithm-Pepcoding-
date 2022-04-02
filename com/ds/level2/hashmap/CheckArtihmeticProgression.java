@@ -12,27 +12,24 @@ public class CheckArtihmeticProgression {
 	boolean checkIsAP(int arr[], int n) {
 		// code here
 
-		HashSet<Integer> set = new HashSet<>();
-		int min = Integer.MAX_VALUE;
-		int smin = Integer.MAX_VALUE;
-
-		for (int x : arr) {
-			set.add(x);
-
-			if (x < min) {
-				smin = min;
-				min = x;
-			} else if (x < smin) {
-				smin = x;
-			}
+		if (arr.length == 1) {
+			return true;
 		}
-
-		int d = smin - min;
-
-		for (int i = 1; i <= n; i++) {
-			int term = min + (i - 1) * d;
-			if (!set.contains(term)) {
-				return false;
+		HashSet<Integer> set = new HashSet<Integer>();
+		int min = Integer.MAX_VALUE;
+		int max = Integer.MIN_VALUE;
+		for (int i = 0; i < arr.length; i++) {
+			min = Math.min(min, arr[i]);
+			max = Math.max(max, arr[i]);
+			set.add(arr[i]);
+		}
+		int diff = (max - min) / (arr.length - 1);
+		for (int i = 0; i < arr.length; i++) {
+			if (arr[i] == min || arr[i] == max) {
+			} else {
+				if (!set.contains(arr[i] - diff) || !set.contains(arr[i] + diff)) {
+					return false;
+				}
 			}
 		}
 

@@ -8,6 +8,8 @@ import java.util.HashMap;
  */
 // description of question is very complex we just need to check weather double of half of the array
 //element if present or not.
+
+//954. Array of Doubled Pairs
 public class ArrayOfDoubledPairs {
 
 	public boolean canReorderDoubled(int[] arr) {
