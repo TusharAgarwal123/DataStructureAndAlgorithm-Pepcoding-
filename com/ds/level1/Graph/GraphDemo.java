@@ -629,6 +629,60 @@ public class GraphDemo {
 
 	}
 
+	// leetcode 1584. Min Cost to Connect All Points.
+	public int minCostConnectPoints(int[][] points) {
+
+		ArrayList<Edge>[] graph = new ArrayList[points.length];
+		for (int i = 0; i < graph.length; i++) {
+			graph[i] = new ArrayList<Edge>();
+		}
+
+		// calculating weight of all the edges.
+		for (int i = 0; i < points.length; i++) {
+			for (int j = 0; j < points.length; j++) {
+				if (i != j) {
+					int x1 = points[i][0];
+					int x2 = points[j][0];
+					int y1 = points[i][1];
+					int y2 = points[j][1];
+
+					int val = Math.abs(x1 - x2) + Math.abs(y1 - y2);
+
+					graph[i].add(new Edge(i, j, val));
+				}
+
+			}
+		}
+
+		int count = 0;
+
+		// applying prim's algorithm.
+		boolean visited[] = new boolean[graph.length];
+		PriorityQueue<Pair5> q = new PriorityQueue<>();
+
+		q.add(new Pair5(0, -1, 0));
+
+		while (q.size() > 0) {
+			Pair5 rem = q.remove();
+			if (visited[rem.vtx]) {
+				continue;
+			}
+
+			visited[rem.vtx] = true;
+
+			count += rem.wt;
+			for (Edge e : graph[rem.vtx]) {
+				if (visited[e.v2] == false) {
+					q.add(new Pair5(e.v2, rem.vtx, e.wt));
+				}
+			}
+
+		}
+
+		return count;
+
+	}
+
 	public static void main(String[] args) throws Exception {
 
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));

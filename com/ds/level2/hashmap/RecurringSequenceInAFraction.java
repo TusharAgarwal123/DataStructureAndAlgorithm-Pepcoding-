@@ -7,6 +7,8 @@ import java.util.HashMap;
 2. You have to convert this fraction into a decimal.
 3. If the decimals are repeating recursively, then you have to put the recurring sequence inside a bracket.
  */
+
+//leetcode 166.
 public class RecurringSequenceInAFraction {
 
 	public static String solution(int numerator, int denominator) {

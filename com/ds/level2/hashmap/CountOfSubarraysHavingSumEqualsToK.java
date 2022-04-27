@@ -6,6 +6,7 @@ import java.util.HashMap;
  * 1. You are given an array of integers(arr) and a number K.
 2. You have to find the count of subarrays whose sum equals k.
  */
+//leetcode 560.
 public class CountOfSubarraysHavingSumEqualsToK {
 
 	public static int solution(int[] arr, int target) {
