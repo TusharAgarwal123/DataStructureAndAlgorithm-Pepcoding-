@@ -3,7 +3,10 @@ package com.ds.level1.Graph;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Stack;
@@ -680,6 +683,157 @@ public class GraphDemo {
 		}
 
 		return count;
+
+	}
+
+	static class Node {
+
+		String key;
+		double wt;
+
+		Node(String key, double wt) {
+			this.key = key;
+			this.wt = wt;
+		}
+	}
+
+	// 399. Evaluate Division
+	public double[] calcEquation(List<List<String>> equations, double[] values, List<List<String>> queries) {
+
+		HashMap<String, List<Node>> graph = buildGraph(equations, values);
+
+		double[] result = new double[queries.size()];
+
+		for (int i = 0; i < queries.size(); i++) {
+			result[i] = dfs(queries.get(i).get(0), queries.get(i).get(1), new HashSet(), graph);
+		}
+
+		return result;
+
+	}
+
+	public double dfs(String src, String dest, HashSet<String> visited, HashMap<String, List<Node>> graph) {
+
+		// if any vertices not present.
+		if (!(graph.containsKey(src) && graph.containsKey(dest))) {
+			return -1.0;
+		}
+
+		if (src.equals(dest)) {
+			return 1.0;
+		}
+
+		visited.add(src);
+		for (Node ng : graph.get(src)) {
+			if (!visited.contains(ng.key)) {
+				double ans = dfs(ng.key, dest, visited, graph);
+				if (ans != -1.0) {
+					return ans * ng.wt;
+				}
+			}
+		}
+
+		return -1.0;
+
+	}
+
+	public HashMap<String, List<Node>> buildGraph(List<List<String>> equations, double[] values) {
+
+		HashMap<String, List<Node>> graph = new HashMap<>();
+
+		for (int i = 0; i < values.length; i++) {
+
+			String src = equations.get(i).get(0);
+			String dest = equations.get(i).get(1);
+
+			graph.putIfAbsent(src, new ArrayList<>());
+			graph.putIfAbsent(dest, new ArrayList<>());
+
+			graph.get(src).add(new Node(dest, values[i]));
+			graph.get(dest).add(new Node(src, 1 / values[i]));
+
+		}
+
+		return graph;
+
+	}
+
+	static class Pair7 implements Comparable<Pair7> {
+		int r1;
+		int c1;
+		int diff;
+
+		Pair7(int r1, int c1, int diff) {
+			this.r1 = r1;
+			this.c1 = c1;
+			this.diff = diff;
+		}
+
+		public int compareTo(Pair7 o) {
+			return this.diff - o.diff;
+		}
+	}
+
+	// 1631. Path With Minimum Effort
+	// we have applied Dijkstra algorithms.
+	public int minimumEffortPath(int[][] heights) {
+
+		PriorityQueue<Pair7> q = new PriorityQueue();
+		q.add(new Pair7(0, 0, 0));
+		int n = heights.length;
+
+		int row = heights.length;
+		int col = heights[0].length;
+		boolean visited[][] = new boolean[row][col];
+
+		while (q.size() > 0) {
+
+			Pair7 rem = q.remove();
+
+			if (rem.r1 == row - 1 && rem.c1 == col - 1) {
+				return rem.diff;
+			}
+
+			if (visited[rem.r1][rem.c1]) {
+				continue;
+			}
+
+			visited[rem.r1][rem.c1] = true;
+			// right side
+			if (rem.c1 + 1 < col) {
+				if (visited[rem.r1][rem.c1 + 1] == false) {
+					int diff = Math.abs(heights[rem.r1][rem.c1] - heights[rem.r1][rem.c1 + 1]);
+					q.add(new Pair7(rem.r1, rem.c1 + 1, Math.max(diff, rem.diff)));
+				}
+			}
+
+			// left side
+			if (rem.c1 - 1 >= 0) {
+				if (visited[rem.r1][rem.c1 - 1] == false) {
+					int diff = Math.abs(heights[rem.r1][rem.c1] - heights[rem.r1][rem.c1 - 1]);
+					q.add(new Pair7(rem.r1, rem.c1 - 1, Math.max(diff, rem.diff)));
+				}
+			}
+
+			// top side
+			if (rem.r1 - 1 >= 0) {
+				if (visited[rem.r1 - 1][rem.c1] == false) {
+					int diff = Math.abs(heights[rem.r1][rem.c1] - heights[rem.r1 - 1][rem.c1]);
+					q.add(new Pair7(rem.r1 - 1, rem.c1, Math.max(diff, rem.diff)));
+				}
+			}
+
+			// bottom side
+			if (rem.r1 + 1 < row) {
+				if (visited[rem.r1 + 1][rem.c1] == false) {
+					int diff = Math.abs(heights[rem.r1][rem.c1] - heights[rem.r1 + 1][rem.c1]);
+					q.add(new Pair7(rem.r1 + 1, rem.c1, Math.max(diff, rem.diff)));
+				}
+			}
+
+		}
+
+		return -1;
 
 	}
 
