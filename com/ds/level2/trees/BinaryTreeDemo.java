@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Stack;
@@ -928,6 +929,243 @@ public class BinaryTreeDemo {
 		}
 		return succ;
 
+	}
+
+	// 105. Construct Binary Tree from Preorder and Inorder Traversal
+	Map<Integer, Integer> map;
+	int id = 0;
+
+	public TreeNode buildTree(int[] preorder, int[] inorder) {
+
+		map = new HashMap<>();
+
+		for (int i = 0; i < inorder.length; i++) {
+			map.put(inorder[i], i);
+		}
+
+		TreeNode root = constructTree(preorder, inorder, 0, inorder.length - 1);
+		return root;
+
+	}
+
+	public TreeNode constructTree(int pre[], int in[], int s, int e) {
+
+		if (s > e) {
+			return null;
+		}
+
+		TreeNode root = new TreeNode(pre[id++]);
+		if (s == e) {
+			return root;
+		}
+
+		int index = map.get(root.val);
+		root.left = constructTree(pre, in, s, index - 1);
+		root.right = constructTree(pre, in, index + 1, e);
+
+		return root;
+
+	}
+
+	// 106. Construct Binary Tree from Inorder and Postorder Traversal
+	public TreeNode build(int[] inorder, int[] postorder) {
+
+		map = new HashMap<Integer, Integer>();
+
+		for (int i = 0; i < inorder.length; i++) {
+			map.put(inorder[i], i);
+		}
+
+		TreeNode root = construct(inorder, postorder, 0, postorder.length - 1, 0, inorder.length - 1);
+		return root;
+
+	}
+
+	public TreeNode construct(int[] inorder, int[] postorder, int post_lo, int post_hi, int in_lo, int in_hi) {
+
+		if (post_lo > post_hi || in_lo > in_hi) {
+			return null;
+		}
+
+		int idx = map.get(postorder[post_hi]);
+
+		TreeNode root = new TreeNode();
+
+		root.val = postorder[post_hi];
+
+		int rhs = in_hi - idx;
+
+		root.left = construct(inorder, postorder, post_lo, post_hi - rhs - 1, in_lo, idx - 1);
+		root.right = construct(inorder, postorder, post_hi - rhs, post_hi - 1, idx + 1, in_hi);
+
+		return root;
+
+	}
+
+	// 222. Count Complete Tree Nodes
+	// Time = O(logn^2)
+	public int countNodes(TreeNode root) {
+
+		if (root == null) {
+			return 0;
+		}
+
+		// finding left heigth.
+		int lh = 0;
+		TreeNode node = root.left;
+		while (node != null) {
+			lh++;
+			node = node.left;
+		}
+
+		// finding right heigth.
+		int rh = 0;
+		node = root.right;
+		while (node != null) {
+			rh++;
+			node = node.right;
+		}
+
+		if (lh == rh) {
+			int ht = lh + 1;
+			return (1 << ht) - 1;
+		} else {
+			return countNodes(root.left) + countNodes(root.right) + 1;
+		}
+
+	}
+
+	// Maximum sum leaf to root path
+	/*
+	 * Given a Binary Tree, find the maximum sum path from a leaf to root.
+	 */
+
+	public static int maxPathSum(TreeNode root) {
+
+		if (root == null) {
+			return 0;
+		}
+		// code here
+		int left = maxPathSum(root.left);
+		int right = maxPathSum(root.right);
+
+		return Math.max(left, right) + root.val;
+	}
+
+	// this appraoch will work for all possible cases above may not work in some
+	// cases, if tree has
+	// negative value and only have left side don't have right side.
+	public static int maxPathSum2(TreeNode root) {
+
+		if (root.left != null && root.right != null) {
+			int left = maxPathSum(root.left);
+			int right = maxPathSum(root.right);
+
+			return Math.max(left, right) + root.val;
+		} else if (root.left != null) {
+			int left = maxPathSum(root.left);
+			return left + root.val;
+		} else if (root.right != null) {
+			int right = maxPathSum(root.right);
+			return right + root.val;
+		} else {
+			return root.val;
+		}
+
+	}
+
+	// this is finest solution. it will also work in negative cases.
+	public static int maxPathSum3(TreeNode root) {
+
+		if (root == null) {
+			return Integer.MIN_VALUE;
+		}
+		if (root.left == null && root.right == null) {
+			return root.val;
+		}
+
+		int left = maxPathSum(root.left);
+		int right = maxPathSum(root.right);
+
+		return Math.max(left, right) + root.val;
+
+	}
+
+	// maximum path sum from root node to any node.
+	int findMaxSum(TreeNode node) {
+		// your code goes here
+
+		if (node.left != null && node.right != null) {
+			int left = findMaxSum(node.left);
+			int right = findMaxSum(node.right);
+
+			int left_dash = Math.max(0, left);
+			int right_dash = Math.max(0, right);
+
+			return Math.max(left_dash, right_dash) + node.val;
+
+		} else if (node.left != null) {
+			int left = findMaxSum(node.left);
+			int left_dash = Math.max(0, left);
+
+			return left_dash + node.val;
+		} else if (node.right != null) {
+			int right = findMaxSum(node.right);
+			int right_dash = Math.max(0, right);
+
+			return right_dash + node.val;
+		} else {
+			return node.val;
+		}
+
+	}
+
+	// 124. Binary Tree Maximum Path Sum
+	// maximum path sum from any node to any node.
+	int sum = Integer.MIN_VALUE;
+
+	int findMaxSumFfromAnyToAny(TreeNode node) {
+		// your code goes here
+		sum = Integer.MIN_VALUE;
+		int ans = traverse(node);
+		return sum;
+
+	}
+
+	// it returns the maximum path from root to node but it also calculate maximum
+	// path from node to node.
+	int traverse(TreeNode node) {
+		if (node.left != null && node.right != null) {
+			int left = traverse(node.left);
+			int right = traverse(node.right);
+
+			int left_dash = Math.max(0, left);
+			int right_dash = Math.max(0, right);
+
+			int ans = Math.max(left_dash, right_dash) + node.val;
+
+			sum = Math.max(sum, (left_dash + right_dash + node.val));
+			return ans;
+
+		} else if (node.left != null) {
+			int left = traverse(node.left);
+			int left_dash = Math.max(0, left);
+
+			int ans = left_dash + node.val;
+
+			sum = Math.max(sum, (left_dash + node.val));
+			return ans;
+		} else if (node.right != null) {
+			int right = traverse(node.right);
+			int right_dash = Math.max(0, right);
+
+			int ans = right_dash + node.val;
+			sum = Math.max(sum, (right_dash + node.val));
+			return ans;
+		} else {
+			sum = Math.max(sum, node.val);
+			return node.val;
+		}
 	}
 
 }
