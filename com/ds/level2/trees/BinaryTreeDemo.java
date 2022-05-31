@@ -23,6 +23,7 @@ public class BinaryTreeDemo {
 		int val;
 		TreeNode left;
 		TreeNode right;
+		TreeNode random;
 
 		TreeNode() {
 
@@ -1166,6 +1167,396 @@ public class BinaryTreeDemo {
 			sum = Math.max(sum, node.val);
 			return node.val;
 		}
+	}
+
+	// leetcode 437. Path Sum III
+	Map<Integer, Integer> frMap;
+	int c = 0;
+
+	public int pathSum(TreeNode root, int targetSum) {
+
+		if (root == null) {
+			return 0;
+		}
+
+		frMap = new HashMap<>();
+		frMap.put(0, 1);
+		solve(root, root.val, targetSum);
+		return c;
+
+	}
+
+	public void solve(TreeNode root, int sum, int target) {
+
+		c += frMap.getOrDefault((sum - target), 0);
+
+		frMap.put(sum, frMap.getOrDefault(sum, 0) + 1);
+
+		if (root.left != null) {
+			solve(root.left, sum + root.left.val, target);
+		}
+
+		if (root.right != null) {
+			solve(root.right, sum + root.right.val, target);
+		}
+
+		frMap.put(sum, frMap.get(sum) - 1); // decreasing the frequency of sum when we return from node.
+
+	}
+
+	class Node {
+		public int val;
+		public Node left;
+		public Node right;
+		public Node next;
+
+		public Node() {
+		}
+
+		public Node(int _val) {
+			val = _val;
+		}
+
+		public Node(int _val, Node _left, Node _right, Node _next) {
+			val = _val;
+			left = _left;
+			right = _right;
+			next = _next;
+		}
+
+		// 116. Populating Next Right Pointers in Each Node
+		public Node connect(Node root) {
+
+			if (root == null) {
+				return root;
+			}
+
+			Node main = root;
+			while (main.left != null) {
+				// temp will traverse all the node of each level and connect it's childrens
+				// next.
+				Node temp = main;
+
+				while (temp != null) {
+					temp.left.next = temp.right;
+					if (temp.next != null) {
+						temp.right.next = temp.next.left;
+					}
+					temp = temp.next;
+				}
+
+				main = main.left;
+
+			}
+
+			return root;
+
+		}
+
+		// 117. Populating Next Right Pointers in Each Node II
+		// This approach can be use for both question 116 and 117.
+		public Node connect2(Node root) {
+
+			Node curr = root;
+			Node head = null;
+			Node tail = null;
+
+			while (curr != null) {
+
+				// code for curr on level x,and head, tail on level x+1.
+				while (curr != null) {
+
+					if (curr.left != null) {
+						if (head == null) {
+							head = tail = curr.left;
+						} else {
+							tail.next = curr.left;
+							tail = curr.left;
+						}
+					}
+
+					if (curr.right != null) {
+						if (head == null) {
+							head = tail = curr.right;
+						} else {
+							tail.next = curr.right;
+							tail = curr.right;
+						}
+					}
+
+					curr = curr.next;
+
+				}
+
+				curr = head;
+				head = null;
+				tail = null;
+
+			}
+
+			return root;
+
+		}
+
+		// Image Multiplication on geeksforgeeks
+		// we have to do the mod of product it is given in question.
+		long ans = 0;
+		long mod = 1000000007;
+
+		public long imgMultiply(Node root) {
+			// code here
+			ans = (root.val * root.val) % mod;
+			helper(root.left, root.right);
+			return ans;
+
+		}
+
+		public void helper(Node n1, Node n2) {
+			if (n1 == null || n2 == null) {
+				return;
+			}
+
+			ans = (ans + n1.val * n2.val) % mod;
+
+			helper(n1.left, n2.right);
+			helper(n1.right, n2.left);
+
+		}
+
+	}
+
+	// Find the Closest Element in BST
+
+	// time => O(logn)
+	static int minAbs;
+
+	static int minDiff(Node root, int K) {
+		// Write your code here
+
+		minAbs = Integer.MAX_VALUE;
+		helper(root, K);
+		return minAbs;
+
+	}
+
+	static void helper(Node root, int k) {
+
+		if (root == null) {
+			return;
+		}
+
+		int diff = Math.abs(root.val - k);
+
+		minAbs = Math.min(minAbs, diff);
+
+		if (root.val > k) {
+			helper(root.left, k);
+		} else if (root.val < k) {
+			helper(root.right, k);
+		} else {
+			return;
+		}
+
+	}
+
+	// Maximum Path Sum between 2 Leaf Nodes on gfg.
+	int max;
+
+	int maxPathSum(Node root) {
+		// code here
+		max = Integer.MIN_VALUE;
+		if (root.left != null && root.right != null) {
+			traverse(root);
+			return max;
+		} else { // if one side is null
+			int val = traverse(root); // it will return max path from root to leaf
+			return Math.max(val, max);
+		}
+	}
+
+	// this method will return max path from root to leaf
+	public int traverse(Node root) {
+
+		if (root.left != null && root.right != null) {
+			int left = traverse(root.left);
+			int right = traverse(root.right);
+
+			max = Math.max(max, (left + right + root.val)); // calculating leaf to leaf path.
+
+			return Math.max(left, right) + root.val;
+		} else if (root.left != null) {
+			int left = traverse(root.left);
+
+			// max=Math.max(max,(left+root.data));
+			return left + root.val;
+		} else if (root.right != null) {
+			int right = traverse(root.right);
+
+			// max=Math.max(max,(right+root.data));
+			return right + root.val;
+		} else {
+			// if it is leaf node
+			// max=Math.max(max,root.data);
+			return root.val;
+		}
+
+	}
+
+	// 1008. Construct Binary Search Tree from Preorder Traversal
+	int index = 0;
+
+	public TreeNode bstFromPreorder(int[] preorder) {
+
+		return construct(preorder, Integer.MIN_VALUE, Integer.MAX_VALUE);
+
+	}
+
+	public TreeNode construct(int pre[], int min, int max) {
+
+		if (index == pre.length) {
+			return null;
+		} else if (pre[index] > min && pre[index] < max) {
+			TreeNode node = new TreeNode(pre[index]);
+			index++;
+			node.left = construct(pre, min, node.val);
+			node.right = construct(pre, node.val, max);
+			return node;
+		} else {
+			return null;
+		}
+
+	}
+
+	// Construct BST from Postorder on gfg
+	static int ind;
+
+	public static TreeNode constructTree(int post[], int n) {
+		// Add your code here.
+		ind = n - 1;
+		return construct2(post, Integer.MIN_VALUE, Integer.MAX_VALUE);
+	}
+
+	public static TreeNode construct2(int post[], int min, int max) {
+
+		if (ind < 0) {
+			return null;
+		} else if (post[ind] > min && post[ind] < max) {
+			TreeNode node = new TreeNode(post[ind]);
+			ind--;
+
+			node.right = construct2(post, node.val, max);
+			node.left = construct2(post, min, node.val);
+
+			return node;
+		} else {
+			return null;
+		}
+
+	}
+
+	// leetcode 968. Binary Tree Cameras
+	int count = 0;
+	final int CAMERA = 1;
+	final int MONITOR = 2;
+	final int NOT_MONITOR = 3;
+
+	public int minCameraCover(TreeNode root) {
+
+		if (root == null) {
+			return count;
+		}
+
+		int val = helper(root);
+		if (val == NOT_MONITOR) {
+			count++;
+		}
+
+		return count;
+
+	}
+
+	public int helper(TreeNode root) {
+
+		if (root == null) {
+			return MONITOR;
+		}
+
+		int left = helper(root.left);
+		int right = helper(root.right);
+
+		if (left == NOT_MONITOR || right == NOT_MONITOR) {
+			count++;
+			return CAMERA;
+		} else if (left == CAMERA || right == CAMERA) {
+			return MONITOR;
+		} else {
+			return NOT_MONITOR; // when from both side monitor is return.
+		}
+
+	}
+
+	// on gfg
+	public TreeNode cloneTree(TreeNode tree) {
+		// add code here.
+
+		createDuplicates(tree);
+		setRandoms(tree);
+		return extractTree(tree);
+	}
+
+	public void setRandoms(TreeNode orig) {
+
+		if (orig == null) {
+			return;
+		}
+
+		setRandoms(orig.left.left); // bcoz we have cloned the left node only.
+		setRandoms(orig.right);
+
+		if (orig.random != null) {
+			orig.left.random = orig.random.left;
+		}
+
+	}
+
+	public TreeNode extractTree(TreeNode root) {
+
+		if (root == null) {
+			return null;
+		}
+
+		TreeNode leftDup = extractTree(root.left.left);
+		TreeNode rightDup = extractTree(root.right);
+
+		// root.left=left;
+		// root.right=right;
+
+		TreeNode dup = root.left;
+		root.left = root.left.left;
+
+		dup.left = leftDup;
+		dup.right = rightDup;
+
+		return dup;
+
+	}
+
+	public void createDuplicates(TreeNode root) {
+
+		if (root == null) {
+			return;
+		}
+
+		createDuplicates(root.left);
+		createDuplicates(root.right);
+
+		TreeNode clone = new TreeNode(root.val);
+		// clone.data=root.data;
+
+		clone.left = root.left;
+		clone.right = null;
+		root.left = clone;
+
 	}
 
 }
