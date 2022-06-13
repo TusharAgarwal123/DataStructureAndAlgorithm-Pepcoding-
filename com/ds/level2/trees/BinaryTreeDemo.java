@@ -1559,4 +1559,812 @@ public class BinaryTreeDemo {
 
 	}
 
+	// leetcode 834. Sum of Distances in Tree.
+	public int[] sumOfDistancesInTree(int n, int[][] edges) {
+
+		ArrayList<Integer>[] graph = new ArrayList[n];
+
+		for (int i = 0; i < n; i++) {
+			graph[i] = new ArrayList<>();
+		}
+
+		for (int i = 0; i < edges.length; i++) {
+
+			int u = edges[i][0];
+			int v = edges[i][1];
+
+			graph[u].add(v);
+			graph[v].add(u);
+		}
+
+		int nodes[] = new int[n];
+		int res[] = new int[n];
+
+		helper(graph, nodes, res, 0, -1);
+		helper2(graph, nodes, res, 0, -1);
+
+		return res;
+
+	}
+
+	public void helper(ArrayList<Integer>[] graph, int nodes[], int res[], int src, int par) {
+
+		for (int nbr : graph[src]) {
+			if (nbr != par) {
+				helper(graph, nodes, res, nbr, src);
+				nodes[src] += nodes[nbr];
+				res[src] += nodes[nbr] + res[nbr];
+			}
+		}
+
+		nodes[src]++;
+
+	}
+
+	public void helper2(ArrayList<Integer>[] graph, int nodes[], int res[], int src, int par) {
+
+		for (int nbr : graph[src]) {
+			if (nbr != par) {
+				res[nbr] = res[src] + (nodes.length - nodes[nbr]) - (nodes[nbr]);
+				helper2(graph, nodes, res, nbr, src);
+			}
+		}
+
+	}
+
+	// leetcode 889. Construct Binary Tree from Preorder and Postorder Traversal
+	public TreeNode constructFromPrePost(int[] preorder, int[] postorder) {
+
+		HashMap<Integer, Integer> map = new HashMap<>();
+		for (int i = 0; i < postorder.length; i++) {
+			map.put(postorder[i], i);
+		}
+
+		return helper(preorder, postorder, map, 0, preorder.length - 1, 0, postorder.length - 1);
+
+	}
+
+	public TreeNode helper(int pre[], int post[], HashMap<Integer, Integer> map, int prelo, int prehi, int postlo,
+			int posthi) {
+
+		if (prelo > prehi || postlo > posthi) {
+			return null;
+		}
+
+		TreeNode node = new TreeNode(pre[prelo]);
+
+		if (prelo + 1 <= prehi) {
+			int sidx = map.get(pre[prelo + 1]);
+			int lhs = sidx - postlo + 1;
+
+			node.left = helper(pre, post, map, prelo + 1, prelo + lhs, postlo, sidx);
+			node.right = helper(pre, post, map, prelo + lhs + 1, prehi, sidx + 1, posthi - 1);
+		}
+		return node;
+	}
+
+	// leetcode 114. Flatten Binary Tree to Linked List
+	static class Pair4 {
+		TreeNode head;
+		TreeNode tail;
+	}
+
+	public void flatten(TreeNode root) {
+
+		if (root == null) {
+			return;
+		}
+
+		flattenHelper(root);
+
+	}
+
+	public Pair4 flattenHelper(TreeNode root) {
+
+		if (root.left != null && root.right != null) {
+
+			Pair4 lp = flattenHelper(root.left);
+			Pair4 rp = flattenHelper(root.right);
+
+			lp.tail.right = rp.head;
+
+			Pair4 my = new Pair4();
+			my.head = root;
+			my.head.left = null;
+			my.head.right = lp.head;
+			my.tail = rp.tail;
+
+			return my;
+
+		} else if (root.left != null) {
+
+			Pair4 lp = flattenHelper(root.left);
+
+			Pair4 my = new Pair4();
+			my.head = root;
+			my.head.left = null;
+			my.head.right = lp.head;
+			my.tail = lp.tail;
+
+			return my;
+
+		} else if (root.right != null) {
+
+			Pair4 rp = flattenHelper(root.right);
+
+			Pair4 my = new Pair4();
+			my.head = root;
+			my.head.left = null;
+			my.head.right = rp.head;
+			my.tail = rp.tail;
+
+			return my;
+
+		} else {
+
+			Pair4 my = new Pair4();
+			my.tail = root;
+			my.head = root;
+			return my;
+		}
+
+	}
+
+	// leetcode 114. Flatten Binary Tree to Linked List
+	TreeNode prev = null;
+
+	public void flatten2(TreeNode root) {
+
+		if (root == null) {
+			return;
+		}
+
+		// flattenHelper(root);
+
+		flatten(root.right);
+		flatten(root.left);
+		root.right = prev;
+		root.left = null;
+		prev = root;
+
+	}
+
+	// Binary Tree to CDLL on gfg
+	Node bTreeToClist(Node root) {
+
+		return helper(root);
+
+	}
+
+	Node helper(Node node) {
+		if (node == null) {
+			return null;
+		}
+
+		Node lhead = helper(node.left);
+		Node rhead = helper(node.right);
+
+		Node onl = node;
+		onl.left = onl.right = onl;
+
+		Node s1 = concat(lhead, onl);
+		Node s2 = concat(s1, rhead);
+
+		return s2;
+	}
+
+	// concating the two list.
+	Node concat(Node h1, Node h2) {
+		if (h1 == null) {
+			return h2;
+		} else if (h2 == null) {
+			return h1;
+		}
+
+		Node t1 = h1.left; // it gives the last node of first list.
+		Node t2 = h2.left; // it gives the last node of second list.
+
+		t1.right = h2;
+		h2.left = t1;
+
+		t2.right = h1;
+		h1.left = t2;
+
+		return h1;
+	}
+
+	// Binary Tree to CDLL on gfg using morris traversal.
+	Node bTreeToClist2(Node root) {
+
+		if (root == null) {
+			return root;
+		}
+
+		Node prev = null;
+		Node curr = root;
+
+		int c = 0;
+		Node first = null;
+
+		while (curr != null) {
+			if (curr.left == null) {
+
+				if (c == 0) {
+					first = curr;
+					c++;
+				}
+
+				if (prev != null) {
+					prev.right = curr;
+					curr.left = prev;
+				}
+
+				prev = curr;
+				curr = curr.right;
+
+			} else {
+
+				Node iop = curr.left;
+
+				while (iop.right != null && iop.right != curr) {
+					iop = iop.right;
+				}
+
+				if (iop.right == null) {
+					iop.right = curr;
+					curr = curr.left;
+				} else {
+
+					iop.right = null;
+
+					prev.right = curr;
+					curr.left = prev;
+					prev = curr;
+
+					curr = curr.right;
+
+				}
+
+			}
+		}
+
+		// Node first=root;
+		// while(first.left!=null){
+		// first=first.left;
+		// }
+
+		// prev at the end will be last node in inorder traversal.
+
+		first.left = prev;
+		prev.right = first;
+
+		return first;
+
+	}
+
+	// Construct tree from Inorder and LevelOrder on gfg.
+	Node buildTreeFromInAndLevel(int inord[], int level[]) {
+
+		// storing indexes of level order.
+		HashMap<Integer, Integer> map = new HashMap<>();
+		for (int i = 0; i < level.length; i++) {
+			map.put(level[i], i);
+		}
+		// your code here
+		return buildHelper(inord, map, 0, inord.length - 1);
+
+	}
+
+	Node buildHelper(int inord[], HashMap<Integer, Integer> map, int si, int ei) {
+
+		if (si > ei) {
+			return null;
+		}
+
+		int minIdx = si;
+		for (int i = si + 1; i <= ei; i++) {
+			if (map.get(inord[i]) < map.get(inord[minIdx])) {
+				minIdx = i;
+			}
+		}
+
+		Node node = new Node(inord[minIdx]);
+
+		node.left = buildHelper(inord, map, si, minIdx - 1);
+		node.right = buildHelper(inord, map, minIdx + 1, ei);
+
+		return node;
+
+	}
+
+	// leetcode 979. Distribute Coins in Binary Tree.
+	static class Pair6 {
+		int nodes;
+		int coins;
+	}
+
+	int moves = 0;
+
+	public int distributeCoins(TreeNode root) {
+
+		if (root == null) {
+			return moves;
+		}
+
+		helperCoins(root);
+		return moves;
+
+	}
+
+	public Pair6 helperCoins(TreeNode root) {
+		if (root == null) {
+			Pair6 my = new Pair6();
+			my.nodes = 0;
+			my.coins = 0;
+			return my;
+		}
+
+		Pair6 lp = helperCoins(root.left); // it will return no of nodes and coins from left.
+		Pair6 rp = helperCoins(root.right); // it will return no of nodes and coins from right.
+
+		Pair6 my = new Pair6();
+		my.nodes = lp.nodes + rp.nodes + 1;
+		my.coins = lp.coins + rp.coins + root.val;
+
+		moves += Math.abs(my.nodes - my.coins);
+
+		return my;
+
+	}
+
+	// leetcode 297. Serialize and Deserialize Binary Tree
+	static class Pair7 {
+		int st;
+		TreeNode node;
+	}
+
+	// Encodes a tree to a single string.
+	public String serialize(TreeNode root) {
+
+		if (root == null) {
+			return "";
+		}
+
+		StringBuilder sb = new StringBuilder();
+
+		process(root, sb);
+		return sb.toString();
+
+	}
+
+	public void process(TreeNode root, StringBuilder sb) {
+		if (root == null) {
+			sb.append(".");
+			sb.append(" ");
+			return;
+		}
+
+		sb.append(root.val);
+		sb.append(" ");
+		process(root.left, sb);
+		process(root.right, sb);
+	}
+
+	// Decodes your encoded data to tree.
+	public TreeNode deserialize(String data) {
+
+		if (data.length() == 0) {
+			return null;
+		}
+
+		String val[] = data.split(" ");
+
+		TreeNode root = new TreeNode();
+		root.val = (Integer.parseInt(val[0]));
+
+		int id = 1;
+
+		Stack<Pair7> stack = new Stack<>();
+		Pair7 peek = new Pair7();
+		peek.st = 1;
+		peek.node = root;
+
+		stack.push(peek);
+
+		while (stack.size() > 0) {
+
+			Pair7 pp = stack.peek();
+
+			if (pp.st == 1) {
+
+				if (val[id].equals(".") == false) {
+					TreeNode nn = new TreeNode();
+					nn.val = Integer.parseInt(val[id]);
+					pp.node.left = nn;
+
+					Pair7 p = new Pair7();
+					p.st = 1;
+					p.node = nn;
+					stack.push(p);
+				}
+
+				pp.st++;
+				id++;
+
+			} else if (pp.st == 2) {
+
+				if (val[id].equals(".") == false) {
+					TreeNode nn = new TreeNode();
+					nn.val = Integer.parseInt(val[id]);
+					pp.node.right = nn;
+
+					Pair7 p = new Pair7();
+					p.st = 1;
+					p.node = nn;
+					stack.push(p);
+				}
+
+				pp.st++;
+				id++;
+
+			} else if (pp.st == 3) {
+				stack.pop();
+			}
+
+		}
+
+		return root;
+
+	}
+
+	// k-th smallest element in BST on gfg
+	// using morris traversal.
+	public int KthSmallestElement(Node root, int k) {
+		// Write your code here
+
+		Node curr = root;
+		int c = 0;
+
+		int kthSmallest = -1;
+
+		while (curr != null) {
+
+			if (curr.left == null) {
+
+				c++;
+				if (c == k) {
+					return curr.val;
+				}
+
+				curr = curr.right;
+
+			} else {
+
+				Node iop = curr.left;
+
+				while (iop.right != null && iop.right != curr) {
+					iop = iop.right;
+				}
+
+				if (iop.right == null) {
+					iop.right = curr;
+					curr = curr.left;
+				} else {
+
+					c++;
+					if (c == k) {
+						return curr.val;
+					}
+
+					iop.right = null;
+					curr = curr.right;
+
+				}
+
+			}
+
+		}
+
+		return kthSmallest;
+
+	}
+
+	// leetcode 687. Longest Univalue Path
+	int m = 0;
+
+	public int longestUnivaluePath(TreeNode root) {
+
+		if (root == null) {
+			return m;
+		}
+
+		longestUnivaluePathHelper(root);
+		return m;
+	}
+
+	public int longestUnivaluePathHelper(TreeNode root) {
+
+		if (root == null) {
+			return 0;
+		}
+
+		int left = longestUnivaluePathHelper(root.left); // it will return max univalue path from left side
+		int right = longestUnivaluePathHelper(root.right); // it will return max univalue path from right side
+
+		if (root.left != null && root.left.val == root.val) {
+			left += 1;
+		} else {
+			left = 0;
+		}
+
+		if (root.right != null && root.right.val == root.val) {
+			right += 1;
+		} else {
+			right = 0;
+		}
+
+		m = Math.max(m, (left + right));
+
+		return Math.max(left, right);
+
+	}
+
+	// leetcode 1028. Recover a Tree From Preorder Traversal
+	int i = 0;
+
+	public TreeNode recoverFromPreorder(String traversal) {
+
+		return preorder(traversal, 0);
+
+	}
+
+	public TreeNode preorder(String str, int depth) {
+
+		int d = 0; // count of dashes.
+		while (i + d < str.length() && str.charAt(i + d) == '-') {
+			d++;
+		}
+
+		if (d != depth) {
+			return null;
+		}
+
+		int nd = 0; // count of non-dashes.
+
+		while (i + d + nd < str.length() && str.charAt(i + d + nd) != '-') {
+			nd++;
+		}
+
+		int val = Integer.parseInt(str.substring(i + d, i + d + nd));
+		i = i + d + nd;
+
+		TreeNode root = new TreeNode(val);
+		root.left = preorder(str, depth + 1);
+		root.right = preorder(str, depth + 1);
+
+		return root;
+
+	}
+
+	// leetcode 129. Sum Root to Leaf Numbers
+	// This is best approach.
+	int sum1 = 0;
+
+	public int sumNumbers(TreeNode root) {
+
+		if (root == null) {
+			return sum1;
+		}
+
+		sumNumbersHelper(root, 0);
+		return sum1;
+
+	}
+
+	public void sumNumbersHelper(TreeNode root, int val) {
+
+		if (root == null) {
+			return;
+		}
+
+		if (root.left == null && root.right == null) {
+			int num = 10 * val + root.val;
+			sum1 += num;
+
+		}
+
+		sumNumbersHelper(root.left, 10 * val + root.val);
+		sumNumbersHelper(root.right, 10 * val + root.val);
+
+	}
+
+	// leetcode 129. Sum Root to Leaf Numbers
+	// This is not better than first approach.
+	int sum2 = 0;
+
+	public int sumNumbers2(TreeNode root) {
+
+		if (root == null) {
+			return sum2;
+		}
+
+		sumNumbersHelper2(root, new StringBuilder());
+		return sum2;
+
+	}
+
+	public void sumNumbersHelper2(TreeNode root, StringBuilder str) {
+
+		if (root == null) {
+			return;
+		}
+
+		str.append(root.val);
+
+		if (root.left == null && root.right == null) {
+			sum2 += Integer.parseInt(str.toString());
+		}
+
+		sumNumbersHelper2(root.left, str);
+		sumNumbersHelper2(root.right, str);
+
+		str.deleteCharAt(str.length() - 1);
+
+	}
+
+	// leetcode 662. Maximum Width of Binary Tree.
+	static class Pair8 {
+		long min;
+		long max;
+	}
+
+	long maxW = 0;
+
+	public int widthOfBinaryTree(TreeNode root) {
+		HashMap<Integer, Pair8> map = new HashMap<>();
+		maxW = 0;
+		helper(root, 1, 1, map);
+		return (int) maxW;
+	}
+
+	public void helper(TreeNode node, int level, long idx, HashMap<Integer, Pair8> map) {
+		if (node == null) {
+			return;
+		}
+
+		Pair8 p = null;
+
+		if (map.containsKey(level)) {
+			p = map.get(level);
+			p.max = idx;
+		} else {
+			p = new Pair8();
+			p.min = idx;
+			p.max = idx;
+			map.put(level, p);
+		}
+
+		long width = p.max - p.min + 1;
+		if (width > maxW) {
+			maxW = width;
+		}
+
+		helper(node.left, level + 1, 2 * idx, map);
+		helper(node.right, level + 1, 2 * idx + 1, map);
+
+	}
+
+	// leecode 538. Convert BST to Greater Tree
+	int sum3 = 0;
+
+	public TreeNode convertBST(TreeNode root) {
+
+		if (root == null) {
+			return root;
+		}
+
+		convertBST(root.right);
+
+		sum3 += root.val;
+
+		root.val = sum3;
+
+		convertBST(root.left);
+
+		return root;
+
+	}
+
+	// leetcode 236. Lowest Common Ancestor of a Binary Tree.
+	// we can also use the same approach we used for generic tree.
+	public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+
+		if (root == null) {
+			return root;
+		}
+
+		if (root == p || root == q) {
+			return root;
+		}
+
+		TreeNode left = lowestCommonAncestor(root.left, p, q);
+		TreeNode right = lowestCommonAncestor(root.right, p, q);
+
+		if (left != null && right != null) {
+			return root;
+		}
+
+		return (left != null ? left : right);
+
+	}
+
+	// leetcode 2096. Step-By-Step Directions From a Binary Tree Node to Another
+	public String getDirections(TreeNode root, int startValue, int destValue) {
+
+		ArrayList<TreeNode> left = nodeToRootPath(root, startValue);
+		ArrayList<TreeNode> right = nodeToRootPath(root, destValue);
+
+		int i = left.size() - 1;
+		int j = right.size() - 1;
+
+		while (i >= 0 && j >= 0) {
+			if (left.get(i).val == right.get(j).val) {
+				i--;
+				j--;
+			} else {
+				break;
+			}
+		}
+
+		i++;
+		j++;
+
+		// now i and j are at the point at which lca is there.
+
+		StringBuilder sb = new StringBuilder();
+		for (int k = 1; k <= i; k++) {
+			sb.append("U");
+		}
+
+		for (int k = j; k > 0; k--) {
+			if (right.get(k - 1) == right.get(k).left) {
+				sb.append("L");
+			} else {
+				sb.append("R");
+			}
+		}
+
+		return sb.toString();
+
+	}
+
+	public ArrayList<TreeNode> nodeToRootPath(TreeNode root, int p) {
+
+		if (root == null) {
+			return new ArrayList<TreeNode>();
+		}
+
+		if (root.val == p) {
+			ArrayList<TreeNode> list = new ArrayList<TreeNode>();
+			list.add(root);
+			return list;
+		}
+
+		ArrayList<TreeNode> ll = nodeToRootPath(root.left, p);
+
+		if (ll.size() > 0) {
+			ll.add(root);
+			return ll;
+		}
+
+		ArrayList<TreeNode> rl = nodeToRootPath(root.right, p);
+
+		if (rl.size() > 0) {
+			rl.add(root);
+			return rl;
+		}
+
+		return new ArrayList<TreeNode>();
+
+	}
 }
