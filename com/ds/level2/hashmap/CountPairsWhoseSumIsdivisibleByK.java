@@ -5,6 +5,8 @@ import java.util.HashMap;
 /*
  * Given an array A[] and positive integer K, the task is to count total number of pairs in the array whose sum is divisible by K.
  */
+
+//for this question you can refer the code of 1010.that code is easy.
 public class CountPairsWhoseSumIsdivisibleByK {
 
 	public static int countKdivPairs(int arr[], int n, int k) {
