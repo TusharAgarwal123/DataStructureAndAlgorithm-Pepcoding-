@@ -7,6 +7,8 @@ import java.util.Scanner;
 2. The road is to be so planned that there should not be consecutive buildings on either side of the road.
 3. You are required to find and print the number of ways in which the buildings can be built on both side of roads.
  */
+
+//leetcode 2320.
 public class ArrangeBuildings {
 
 	public static void main(String[] args) throws Exception {

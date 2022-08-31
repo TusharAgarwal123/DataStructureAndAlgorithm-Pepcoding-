@@ -1,29 +1,29 @@
-package com.ds.level1.DP;
+package com.ds.level2.DP;
 
-import java.util.Scanner;
+//416. Partition Equal Subset Sum
 
 /*
- * 1. You are given a number n, representing the count of elements.
-2. You are given n numbers.
-3. You are given a number "tar".
-4. You are required to calculate and print true or false, if there is a subset the elements of which add 
-     up to "tar" or not.
+ * Given a non-empty array nums containing only positive integers, find if the array can be partitioned into
+ *  two subsets such that the sum of elements in both subsets is equal.
  */
 
-public class TargetSumSubsetsDP {
+public class PartitionEqualSubsetSum {
 
-	public static void main(String[] args) throws Exception {
+	public boolean canPartition(int[] nums) {
 
-		Scanner sc = new Scanner(System.in);
-		int n = sc.nextInt();
-		int ar[] = new int[n];
-		for (int i = 0; i < n; i++) {
-			ar[i] = sc.nextInt();
+		int sum = 0;
+
+		for (int x : nums) {
+			sum += x;
 		}
 
-		int tar = sc.nextInt();
+		if (sum % 2 == 1) {
+			return false;
+		}
 
-		System.out.println(findSubsets(n, ar, tar));
+		sum = sum / 2;
+
+		return findSubsets(nums.length, nums, sum);
 
 	}
 
