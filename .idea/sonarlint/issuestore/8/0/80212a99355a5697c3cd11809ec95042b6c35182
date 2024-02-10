@@ -1,0 +1,25 @@
+
+y
+java:S1488 "^Immediately return this expression instead of assigning it to the temporary variable "sorted".(ùÆûºøÿÿÿÿ
+@
+java:S1197	"*Move the array designators [] to the type.(ˆ­Üß
+@
+java:S1197"*Move the array designators [] to the type.(Õ´˜Ø
+E	java:S106"+Replace this use of System.out by a logger.(‹ÚÆÿÿÿÿÿ
+E
+java:S1197"*Move the array designators [] to the type.(à¾”üÿÿÿÿ
+@
+java:S1197"*Move the array designators [] to the type.(şŒø„
+?
+java:S1197"*Move the array designators [] to the type.(›ºç
+
+@
+java:S1197"*Move the array designators [] to the type.(Ë÷ú•
+E
+java:S1197 "*Move the array designators [] to the type.(ùÆûºøÿÿÿÿ
+E
+java:S1197&"*Move the array designators [] to the type.(²·Ï¬ûÿÿÿÿ
+E
+java:S1197&"*Move the array designators [] to the type.(²·Ï¬ûÿÿÿÿ
+E
+java:S1197("*Move the array designators [] to the type.(ÛÎ£‰ûÿÿÿÿ
