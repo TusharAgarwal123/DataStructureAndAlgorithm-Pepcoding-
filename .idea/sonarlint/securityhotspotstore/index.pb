@@ -13,3 +13,15 @@ i
 9com/ds/level2/ArrayAndString/MaxChunksToMakeSortedII.java,f/6/f6a27b93d7208e8ea0b44e1f94d0d7a99e85ed7a
 m
 =com/ds/level2/ArrayAndString/PartitionArrayForMaximumSum.java,1/7/17dfaa5e72726e5a28ec99cf21db3e015d1c8fbd
+Q
+!com/ds/level1/sorting/Sort01.java,0/a/0a926e37e68615fcdc9b421350c3cd211ac25b35
+R
+"com/ds/level1/sorting/Sort012.java,5/4/5437e49fa800c87b4ae02b3001fbb1789b1399b0
+c
+3com/ds/level2/hashmap/MaximumConsecutiveOnes_1.java,8/1/81a98e9015b7077e1ed35244bb32a5934b3e2703
+\
+,com/ds/level2/hashmap/PairsWithEqualSum.java,d/2/d25bb6f8d0a15d7399719e3620eeb55fb1a4283a
+Y
+)com/ds/level2/hashmap/QuadrupletSum2.java,e/4/e45492846495384e7caf3ec6852724fdd5a84ed9
+X
+(com/ds/level2/hashmap/QuadrupletSum.java,8/b/8b9564ff7924cc52c593638f1ab57fd2eeabab2c
